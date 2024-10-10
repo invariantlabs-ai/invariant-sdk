@@ -5,6 +5,8 @@ from typing import Optional, cast
 
 from invariant.types.exceptions import InvariantUserError
 
+DEFAULT_INVARIANT_API_URL = "https://explorer.invariantlabs.ai"
+
 
 def fetch_env_var(name: str, default: Optional[str] = None) -> Optional[str]:
     """
@@ -44,7 +46,7 @@ def get_api_url(api_url: Optional[str]) -> str:
         str,
         fetch_env_var(
             "INVARIANT_API_ENDPOINT",
-            default="https://explorer.invariantlabs.ai",
+            default=DEFAULT_INVARIANT_API_URL,
         ),
     )
     if not _api_url.strip():
