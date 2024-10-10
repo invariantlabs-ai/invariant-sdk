@@ -19,3 +19,6 @@ class InvariantAuthError(InvariantError):
 
 class InvariantNotFoundError(InvariantError):
     """Couldn't find the requested resource."""
+
+class InvariantAPITimeoutError(InvariantError):
+    """Request to the Invariant API timed out."""
