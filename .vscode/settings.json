@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./python/invariant"
+    ],
+    "python.formatting.provider": "black",
+}
