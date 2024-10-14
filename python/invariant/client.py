@@ -181,4 +181,4 @@ class Client:
                 "headers": {"Content-Type": "application/json"},
             },
         )
-        return PushTracesResponse(**http_response.json())
+        return PushTracesResponse.from_json(http_response.json())
