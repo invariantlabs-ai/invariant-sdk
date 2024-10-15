@@ -1,7 +1,6 @@
 """Client for interacting with the Invariant APIs."""
 
 import atexit
-import weakref
 from typing import Dict, Literal, Mapping, Optional, Tuple, Union
 from invariant.types.exceptions import (
     InvariantError,
