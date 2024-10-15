@@ -106,6 +106,14 @@ def test_validate_fields_request_invalid_metadata(valid_messages, valid_annotati
             annotations=valid_annotations,
             metadata=invalid_metadata,
         )
+    with pytest.raises(
+        ValueError, match="metadata must be a list of Dict type"
+    ):
+        _ = PushTracesRequest(
+            messages=valid_messages,
+            annotations=valid_annotations,
+            metadata=[[{"meta_key": "meta_value"}]],
+        )
 
 
 def test_validate_fields_request_none_values(valid_messages):

@@ -57,12 +57,21 @@ class PushTracesRequest(BaseModel):
             raise ValueError("annotations must be the same length as messages")
         if annotations is not None and not all(
             isinstance(trace_annotation, list)
-            and all(isinstance(annotation, AnnotationCreate) for annotation in trace_annotation)
+            and all(
+                isinstance(annotation, AnnotationCreate)
+                for annotation in trace_annotation
+            )
             for trace_annotation in annotations
         ):
-            raise ValueError("annotations must be a list of lists of AnnotationCreate type")
+            raise ValueError(
+                "annotations must be a list of lists of AnnotationCreate type"
+            )
         if metadata is not None and len(metadata) != len(messages):
             raise ValueError("metadata must be the same length as messages")
+        if metadata is not None and not all(
+            isinstance(metadatum, Dict) for metadatum in metadata
+        ):
+            raise ValueError("metadata must be a list of Dict type")
 
 
 class PushTracesResponse(BaseModel):
