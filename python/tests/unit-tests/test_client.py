@@ -96,8 +96,10 @@ def test_client_repr():
 
 
 @mock.patch("invariant.client.requests.Session")
-def test_push_traces(mock_session_cls: mock.Mock, set_env_vars, push_traces_request):  # pylint: disable=unused-argument
-    """Test the push_traces method."""
+def test_push_traces_with_default_headers(
+    mock_session_cls: mock.Mock, set_env_vars, push_traces_request
+):  # pylint: disable=unused-argument
+    """Test the push_traces method with default headers passed."""
     mock_response = mock.Mock()
     mock_response.json.return_value = {
         "id": ["123"],
@@ -108,7 +110,9 @@ def test_push_traces(mock_session_cls: mock.Mock, set_env_vars, push_traces_requ
     mock_session_cls.return_value = mock_session
 
     client = Client(timeout_ms=(3000, 7000))
-    push_traces_response = client.push_trace(push_traces_request)
+    push_traces_response = client.push_trace(
+        push_traces_request,
+    )
     assert push_traces_response.id == ["123"]
     assert push_traces_response.dataset == "example_dataset"
 
@@ -119,7 +123,107 @@ def test_push_traces(mock_session_cls: mock.Mock, set_env_vars, push_traces_requ
         json=push_traces_request.to_json(),
         timeout=(3.0, 7.0),
         headers={
-            "Authorization": "Bearer test-key",
+            "Authorization": "Bearer test-key",  # Default API key from env.
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        stream=False,
+    )
+
+
+@mock.patch("invariant.client.requests.Session")
+def test_push_traces_with_overridden_headers(
+    mock_session_cls: mock.Mock, set_env_vars, push_traces_request
+):  # pylint: disable=unused-argument
+    """Test the push_traces method with override headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "id": ["123"],
+        "dataset": "example_dataset",
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    client = Client(timeout_ms=(3000, 7000))
+    # Pass headers in request_kwargs to test that it is passed through to the API.
+    push_traces_response = client.push_trace(
+        push_traces_request,
+        request_kwargs={
+            "headers": {
+                "Authorization": "Bearer overridden-key",
+                "Content-Type": "text/plain",
+                "Accept-Language": "en",
+            },
+        },
+    )
+    assert push_traces_response.id == ["123"]
+    assert push_traces_response.dataset == "example_dataset"
+
+    # Assert that the request method was called once with the expected arguments.
+    mock_session.request.assert_called_once_with(
+        method="POST",
+        url="https://default.api.url/api/v1/push/trace",
+        json=push_traces_request.to_json(),
+        timeout=(3.0, 7.0),
+        headers={
+            "Authorization": "Bearer overridden-key",  # Overridden.
+            "Accept": "application/json",  # Default.
+            "Content-Type": "text/plain",  # Overridden.
+            "Accept-Language": "en",  # Overridden.
+        },
+        stream=False,
+    )
+
+
+@mock.patch("invariant.client.requests.Session")
+def test_create_request_and_push_trace(mock_session_cls: mock.Mock, set_env_vars):  # pylint: disable=unused-argument
+    """Test the push_traces method with default headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "id": ["123"],
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    client = Client(timeout_ms=(3000, 7000))
+    messages = [
+        [
+            {"role": "user", "content": "one"},
+            {"role": "assistant", "content": "two \n three"},
+        ]
+    ]
+    annotations = [
+        [
+            {
+                "content": "annotating one",
+                "address": "messages[0].content:L0",
+                "extra_metadata": {"key1": "value1"},
+            }
+        ]
+    ]
+    metadata = [{"x": "y"}]
+    push_traces_response = client.create_request_and_push_trace(
+        messages=messages,
+        annotations=annotations,
+        metadata=metadata,
+    )
+    assert push_traces_response.id == ["123"]
+
+    # Assert that the request method was called once with the expected arguments.
+    expected_request = PushTracesRequest(
+        messages=messages,
+        annotations=AnnotationCreate.from_nested_dicts(annotations),
+        metadata=metadata,
+    )
+    mock_session.request.assert_called_once_with(
+        method="POST",
+        url="https://default.api.url/api/v1/push/trace",
+        timeout=(3.0, 7.0),
+        json=expected_request.to_json(),
+        headers={
+            "Authorization": "Bearer test-key",  # Default API key from env.
             "Accept": "application/json",
             "Content-Type": "application/json",
         },

@@ -1,7 +1,8 @@
 """Client for interacting with the Invariant APIs."""
 
 import atexit
-from typing import Dict, Literal, Mapping, Optional, Tuple, Union
+from typing import Dict, List, Literal, Mapping, Optional, Tuple, Union
+from invariant.types.annotations import AnnotationCreate
 from invariant.types.exceptions import (
     InvariantError,
     InvariantAPITimeoutError,
@@ -13,6 +14,7 @@ from invariant.types.push_traces import PushTracesRequest, PushTracesResponse
 
 import requests
 import invariant.utils as invariant_utils
+
 
 DEFAULT_CONNECTION_TIMEOUT_MS = 5_000
 DEFAULT_READ_TIMEOUT_MS = 20_000
@@ -100,7 +102,7 @@ class Client:
         self,
         method: Literal["GET", "POST", "PUT", "DELETE"],
         pathname: str,
-        request_kwargs: Optional[Mapping] = None,
+        request_kwargs: Optional[Mapping],
     ) -> requests.Response:
         """
         Makes a request to the Invariant API.
@@ -110,7 +112,7 @@ class Client:
                                                               for the request.
             pathname (str): The path to make the request to.
             request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
-                                             the requests method.
+                                      the requests method.
 
         Returns:
             requests.Response: The response from the API.
@@ -162,22 +164,67 @@ class Client:
                 f"Error calling method: {method} for path: {pathname}."
             ) from e
 
-    def push_trace(self, request: PushTracesRequest) -> PushTracesResponse:
+    def push_trace(
+        self,
+        request: PushTracesRequest,
+        request_kwargs: Optional[Mapping] = None,
+    ) -> PushTracesResponse:
         """
         Push trace data to the Invariant API.
 
         Args:
             request (PushTracesRequest): The request object containing trace data.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
+                                      the requests method.
 
         Returns:
             PushTracesResponse: The response object.
         """
+        if request_kwargs is None:
+            request_kwargs = {}
         http_response = self.request(
             method="POST",
             pathname=PUSH_TRACE_API_PATH,
             request_kwargs={
+                **request_kwargs,
+                "headers": {
+                    "Content-Type": "application/json",
+                    **request_kwargs.get("headers", {}),
+                },
                 "json": request.to_json(),
-                "headers": {"Content-Type": "application/json"},
             },
         )
         return PushTracesResponse.from_json(http_response.json())
+
+    def create_request_and_push_trace(
+        self,
+        messages: List[List[Dict]],
+        annotations: Optional[List[List[Dict]]] = None,
+        metadata: Optional[List[Dict]] = None,
+        dataset: Optional[str] = None,
+        request_kwargs: Optional[Mapping] = None,
+    ) -> PushTracesResponse:
+        """
+        Push trace data to the Invariant API.
+
+        Args:
+            messages (List[List[Dict]]): The messages to push to the Invariant API.
+            annotations (Optional[List[List[Dict]]]): The annotations to push to the Invariant API.
+            metadata (Optional[List[Dict]]): The metadata to push to the Invariant API.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
+                                      the requests method.
+
+        Returns:
+            PushTracesResponse: The response object.
+        """
+        if request_kwargs is None:
+            request_kwargs = {}
+        request = PushTracesRequest(
+            messages=messages,
+            annotations=(
+                AnnotationCreate.from_nested_dicts(annotations) if annotations else None
+            ),
+            metadata=metadata,
+            dataset=dataset,
+        )
+        return self.push_trace(request, request_kwargs)
