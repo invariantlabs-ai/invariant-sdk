@@ -1,8 +1,6 @@
 """Example usage of the Invariant Python client."""
 
 from invariant.client import Client
-from invariant.types.push_traces import PushTracesRequest
-from invariant.types.annotations import AnnotationCreate
 
 if __name__ == "__main__":
     client = Client(
@@ -10,63 +8,64 @@ if __name__ == "__main__":
         # Add the API key here.
         api_key="",
     )
-    push_traces_request = PushTracesRequest(
-        messages=[
-            [
-                {"role": "user", "content": "one"},
-                {"role": "assistant", "content": "two \n three"},
-            ],
-            [
-                {"role": "user", "content": "four"},
-                {"role": "assistant", "content": "five \n six"},
-            ],
+    messages = [
+        [
+            {"role": "user", "content": "one"},
+            {"role": "assistant", "content": "two \n three"},
         ],
-        annotations=[
-            [
-                AnnotationCreate(
-                    content="annotating one",
-                    address="messages[0].content:L0",
-                    extra_metadata={"key1": "value1"},
-                ),
-                AnnotationCreate(
-                    content="annotating two",
-                    address="messages[1].content:L0",
-                    extra_metadata={"key1": "value1"},
-                ),
-                AnnotationCreate(
-                    content="annotating two again",
-                    address="messages[1].content:L0",
-                    extra_metadata={"key1": "value1"},
-                ),
-                AnnotationCreate(
-                    content="annotating three",
-                    address="messages[1].content:L1",
-                    extra_metadata={"key1": "value1"},
-                ),
-            ],
-            [
-                AnnotationCreate(
-                    content="annotating four",
-                    address="messages[0].content:L0",
-                    extra_metadata={"key1": "value1"},
-                ),
-                AnnotationCreate(
-                    content="annotating five",
-                    address="messages[1].content:L0",
-                    extra_metadata={"key1": "value1"},
-                ),
-                AnnotationCreate(
-                    content="annotating six",
-                    address="messages[1].content:L1",
-                    extra_metadata={"key1": "value1"},
-                ),
-                AnnotationCreate(
-                    content="annotating six again",
-                    address="messages[1].content:L1",
-                    extra_metadata={"key1": "value1"},
-                ),
-            ],
+        [
+            {"role": "user", "content": "four"},
+            {"role": "assistant", "content": "five \n six"},
         ],
+    ]
+    annotations = [
+        [
+            {
+                "content": "annotating one",
+                "address": "messages[0].content:L0",
+                "extra_metadata": {"key1": "value1"},
+            },
+            {
+                "content": "annotating two",
+                "address": "messages[1].content:L0",
+                "extra_metadata": {"key2": "value2"},
+            },
+            {
+                "content": "annotating two again",
+                "address": "messages[1].content:L0",
+                "extra_metadata": {"key3": "value3"},
+            },
+            {
+                "content": "annotating three",
+                "address": "messages[1].content:L1",
+                "extra_metadata": {"key4": "value4"},
+            },
+        ],
+        [
+            {
+                "content": "annotating four",
+                "address": "messages[0].content:L0",
+                "extra_metadata": {"key5": "value5"},
+            },
+            {
+                "content": "annotating five",
+                "address": "messages[1].content:L0",
+                "extra_metadata": {"key6": "value6"},
+            },
+            {
+                "content": "annotating six",
+                "address": "messages[1].content:L1",
+                "extra_metadata": {"key7": "value7"},
+            },
+            {
+                "content": "annotating six again",
+                "address": "messages[1].content:L1",
+                "extra_metadata": {"key8": "value8"},
+            },
+        ],
+    ]
+    metadata = [{"meta_key_1": "meta_value_1"}, {"meta_key_2": "meta_value_2"}]
+    response = client.create_request_and_push_trace(
+        messages=messages, annotations=annotations, metadata=metadata
     )
-    response = client.push_trace(push_traces_request)
     print(response)
