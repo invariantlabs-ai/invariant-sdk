@@ -2,18 +2,18 @@
 
 import atexit
 from typing import Dict, List, Literal, Mapping, Optional, Tuple, Union
-from invariant.types.annotations import AnnotationCreate
-from invariant.types.exceptions import (
+from invariant_sdk.types.annotations import AnnotationCreate
+from invariant_sdk.types.exceptions import (
     InvariantError,
     InvariantAPITimeoutError,
     InvariantAPIError,
     InvariantAuthError,
     InvariantNotFoundError,
 )
-from invariant.types.push_traces import PushTracesRequest, PushTracesResponse
+from invariant_sdk.types.push_traces import PushTracesRequest, PushTracesResponse
 
 import requests
-import invariant.utils as invariant_utils
+import invariant_sdk.utils as invariant_utils
 
 
 DEFAULT_CONNECTION_TIMEOUT_MS = 5_000

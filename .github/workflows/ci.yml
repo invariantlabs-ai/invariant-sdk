@@ -20,14 +20,15 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.12.2"
-    - name: Install dependencies
+    - name: Setup dependencies
       run: |
         cd python
         python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install poetry
+        poetry install --with dev
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/python" >> $GITHUB_ENV
     - name: Run tests
       run: |
         cd python
-        pytest --cov=invariant -s --cov-report=html -vv
+        poetry run pytest --cov=invariant_sdk -s -vv
