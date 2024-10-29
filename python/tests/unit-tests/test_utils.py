@@ -2,8 +2,8 @@
 
 from unittest.mock import patch
 
-import invariant.utils as invariant_utils
-from invariant.types.exceptions import InvariantUserError
+import invariant_sdk.utils as invariant_utils
+from invariant_sdk.types.exceptions import InvariantUserError
 import pytest
 
 

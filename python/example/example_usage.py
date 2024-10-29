@@ -1,6 +1,6 @@
 """Example usage of the Invariant Python client."""
 
-from invariant.client import Client
+from invariant_sdk.client import Client
 
 if __name__ == "__main__":
     client = Client(

@@ -1,7 +1,7 @@
 """Test cases for Annotation classes."""
 
 import pytest
-from invariant.types.annotations import AnnotationCreate
+from invariant_sdk.types.annotations import AnnotationCreate
 
 
 def test_annotation_create_initialization():

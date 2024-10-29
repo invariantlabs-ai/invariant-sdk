@@ -1,7 +1,7 @@
 """Model class for the PushTraces API."""
 
 from typing import Any, Dict, List, Optional
-from invariant.types.annotations import AnnotationCreate
+from invariant_sdk.types.annotations import AnnotationCreate
 from pydantic import BaseModel
 
 

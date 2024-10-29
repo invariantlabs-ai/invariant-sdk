@@ -2,8 +2,8 @@
 
 from typing import Dict, List
 import pytest
-from invariant.types.annotations import AnnotationCreate
-from invariant.types.push_traces import PushTracesRequest, PushTracesResponse
+from invariant_sdk.types.annotations import AnnotationCreate
+from invariant_sdk.types.push_traces import PushTracesRequest, PushTracesResponse
 
 
 @pytest.fixture(name="valid_messages")

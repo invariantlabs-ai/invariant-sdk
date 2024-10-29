@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "invariant_sdk"
+version = "0.1.0"
+description = "SDK for Invariant APIs"
+authors = ["InvariantLabs <hello@invariantlabs.ai>"]
+readme = "README.md"
+packages = [{ include = "invariant_sdk" }]
+
+[tool.poetry.dependencies]
+python = ">= 3.10"
+pydantic = "^2.9.2"
+requests = "^2.32.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.3.3"
+pytest-cov = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

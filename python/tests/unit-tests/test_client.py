@@ -4,10 +4,10 @@ from unittest import mock
 
 import pytest
 import requests
-from invariant.client import Client
-from invariant.types.annotations import AnnotationCreate
-from invariant.types.push_traces import PushTracesRequest
-from invariant.types.exceptions import (
+from invariant_sdk.client import Client
+from invariant_sdk.types.annotations import AnnotationCreate
+from invariant_sdk.types.push_traces import PushTracesRequest
+from invariant_sdk.types.exceptions import (
     InvariantAPITimeoutError,
     InvariantNotFoundError,
     InvariantAuthError,
@@ -95,7 +95,7 @@ def test_client_repr():
     assert repr(client) == expected_repr
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_traces_with_default_headers(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -131,7 +131,7 @@ def test_push_traces_with_default_headers(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_traces_with_overridden_headers(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -176,7 +176,7 @@ def test_push_traces_with_overridden_headers(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_create_request_and_push_trace(mock_session_cls: mock.Mock, set_env_vars):  # pylint: disable=unused-argument
     """Test the push_traces method with default headers passed."""
     mock_response = mock.Mock()
@@ -231,7 +231,7 @@ def test_create_request_and_push_trace(mock_session_cls: mock.Mock, set_env_vars
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_timeout(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -250,7 +250,7 @@ def test_push_trace_timeout(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_connection_error(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -269,7 +269,7 @@ def test_push_trace_connection_error(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_connect_timeout_error(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -288,7 +288,7 @@ def test_push_trace_connect_timeout_error(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_auth_error(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -310,7 +310,7 @@ def test_push_trace_auth_error(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_not_found_error(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -332,7 +332,7 @@ def test_push_trace_not_found_error(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_too_many_requests_error(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -354,7 +354,7 @@ def test_push_trace_too_many_requests_error(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_server_side_error(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument
@@ -376,7 +376,7 @@ def test_push_trace_server_side_error(
     )
 
 
-@mock.patch("invariant.client.requests.Session")
+@mock.patch("invariant_sdk.client.requests.Session")
 def test_push_trace_generic_exception(
     mock_session_cls: mock.Mock, set_env_vars, push_traces_request
 ):  # pylint: disable=unused-argument

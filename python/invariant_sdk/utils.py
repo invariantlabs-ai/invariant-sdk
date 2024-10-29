@@ -3,7 +3,7 @@
 import os
 from typing import Optional, cast
 
-from invariant.types.exceptions import InvariantUserError
+from invariant_sdk.types.exceptions import InvariantUserError
 
 DEFAULT_INVARIANT_API_URL = "https://explorer.invariantlabs.ai"
 
