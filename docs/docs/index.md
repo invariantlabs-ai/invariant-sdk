@@ -6,7 +6,7 @@ The Invariant SDK enables you to share, analyze and collaborate on AI agent runt
 
 ## Install via pip directly
 ```bash
-pip install git+https://github.com/invariantlabs-ai/invariant-sdk.git#egg=invariant_sdk&subdirectory=python
+pip install "git+https://github.com/invariantlabs-ai/invariant-sdk.git#egg=invariant_sdk&subdirectory=python"
 ```
 
 ## Include via requirements.txt
