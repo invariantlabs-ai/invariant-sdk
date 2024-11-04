@@ -20,4 +20,4 @@ jobs:
     - name: Rename the Docker image
       run: docker tag invariant-docs:main images.invariantnet.com/invariant-docs:main
     - name: Push the Docker image
-      run: docker push containers.invariantnet.com/invariant-docs:main
+      run: docker push images.invariantnet.com/invariant-docs:main
