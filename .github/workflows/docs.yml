@@ -1,0 +1,23 @@
+name: Documentation Docker Image
+
+on:
+  push:
+    branches: [ "main", "docs" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      working-directory: docs
+      run: docker build . --tag invariant-docs:main
+    - name: Login to Invariant Container Registry
+      run: echo ${{ secrets.INVARIANT_REGISTRY_PASSWORD }} | docker login -u ${{ secrets.INVARIANT_REGISTRY_USERNAME }} --password-stdin https://images.invariantnet.com
+    - name: Rename the Docker image
+      run: docker tag invariant-docs:main images.invariantnet.com/invariant-docs:main
+    - name: Push the Docker image
+      run: docker push images.invariantnet.com/invariant-docs:main

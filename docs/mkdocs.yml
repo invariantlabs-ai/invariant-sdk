@@ -1,0 +1,9 @@
+site_name: Invariant SDK
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/logo.svg
+  features:
+    - content.code.copy
+extra_css:
+  - assets/invariant.css
