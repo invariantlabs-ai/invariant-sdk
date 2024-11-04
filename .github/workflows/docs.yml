@@ -2,7 +2,7 @@ name: Documentation Docker Image
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "docs" ]
 
 jobs:
 
