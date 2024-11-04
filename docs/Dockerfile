@@ -11,4 +11,5 @@ WORKDIR /docs
 RUN mkdocs build --clean
 
 # serve the documentation if DEV_MODE is set, otherwise, serve built documentation
-CMD if [ "$DEV_MODE" = "true" ]; then mkdocs serve -a 0.0.0.0:8000; else mkdocs build; python -m http.server 8000 --directory site; fi
+# for prod serving, we copy everything to root/docs/, as this is where the docs are actually served from in the container
+CMD if [ "$DEV_MODE" = "true" ]; then mkdocs serve -a 0.0.0.0:8000; else mkdocs build; mkdir root; mv site root/docs; cd root; python -m http.server 8000 --bind 0.0.0.0; fi

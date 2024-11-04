@@ -7,3 +7,4 @@ theme:
     - content.code.copy
 extra_css:
   - assets/invariant.css
+use_directory_urls: false

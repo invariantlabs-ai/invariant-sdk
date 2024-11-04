@@ -1,10 +1,10 @@
 @font-face {
     font-family: NeueMontreal;
-    src: url("/assets/NeueMontreal-Regular.otf") format("opentype");
+    src: url("./NeueMontreal-Regular.otf") format("opentype");
 }
 @font-face {
     font-family: NeueMontreal;
-    src: url("/assets/NeueMontreal-Medium.otf") format("opentype");
+    src: url("./NeueMontreal-Medium.otf") format("opentype");
     font-weight: 500;
 }
 body {
