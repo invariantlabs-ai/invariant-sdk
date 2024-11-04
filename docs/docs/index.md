@@ -9,5 +9,5 @@ This documentation will guide you through the process of setting up the SDK, cap
 To get started, first install the SDK by following the instructions below:
 
 ```bash
-pip install invariant-sdk
+pip install git+https://github.com/invariantlabs-ai/invariant-sdk.git
 ```
