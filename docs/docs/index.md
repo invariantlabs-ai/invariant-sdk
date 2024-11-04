@@ -1,7 +1,3 @@
----
-title: Welcome
----
-
 # Welcome to Invariant
 
 <div class='subtitle'>How to get started with the Invariant SDK</div>
