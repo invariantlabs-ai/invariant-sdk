@@ -1,6 +1,6 @@
 # Welcome to Invariant
 
-<div class='subtitle'>Get started with the Invariant SDK</div>
+<div class='subtitle'>Getting started with the Invariant SDK</div>
 
 The Invariant SDK enables you to share, analyze and collaborate on AI agent traces. It helps you explore the behavior of your AI agents and understand how they interact with their environment. 
 
