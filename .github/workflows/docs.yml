@@ -12,8 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Put commit hash file in src/hash.txt
-      run: echo "main@$(git rev-parse HEAD)" > src/hash.txt
     - name: Build the Docker image
       working-directory: docs
       run: docker build . --tag invariant-docs:main
