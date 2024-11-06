@@ -43,7 +43,7 @@ def test_update_dataset_metadata_request_no_accuracy():
 def test_update_dataset_metadata_request_no_fields():
     """Test creating the UpdateDatasetMetadataRequest class with no fields."""
     with pytest.raises(
-        ValueError, match="At least one of benchmark or accuracy must be provided"
+        ValueError, match="At least one filed must be provided for MetadataUpdate"
     ):
         UpdateDatasetMetadataRequest(
             dataset_name="example_dataset", metadata=MetadataUpdate()
@@ -95,6 +95,7 @@ def test_update_dataset_metadata_request_empty_dataset_name():
             metadata=MetadataUpdate(benchmark="benchmark_name", accuracy=95.5),
         )
 
+
 def test_update_dataset_metadata_to_json():
     """Test the UpdateDatasetMetadataRequest to_json method."""
     request = UpdateDatasetMetadataRequest(
@@ -105,3 +106,9 @@ def test_update_dataset_metadata_to_json():
         "dataset_name": "example_dataset",
         "metadata": {"benchmark": "benchmark_name", "accuracy": 95.5},
     }
+
+
+def test_metadata_update_to_json():
+    """Test the MetadataUpdate to_json method."""
+    metadata_update = MetadataUpdate(accuracy=95.5)
+    assert metadata_update.to_json() == {"accuracy": 95.5}

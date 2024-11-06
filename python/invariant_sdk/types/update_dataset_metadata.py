@@ -28,6 +28,10 @@ class MetadataUpdate(BaseModel):
             raise ValueError("Benchmark must be a non-empty string.")
         return value
 
+    def to_json(self) -> Dict:
+        """Convert the instance to a JSON-serializable dictionary."""
+        return {k: v for k, v in self.model_dump().items() if v is not None}
+
 
 class UpdateDatasetMetadataRequest(BaseModel):
     """Model for the UpdateDatasetMetadata API request."""
@@ -49,9 +53,9 @@ class UpdateDatasetMetadataRequest(BaseModel):
     @field_validator("metadata")
     @staticmethod
     def validate_metadata(value: MetadataUpdate) -> MetadataUpdate:
-        """Ensure at least one of benchmark or accuracy is provided in metadata."""
+        """Ensure at least one field is provided in metadata."""
         if value.accuracy is None and value.benchmark is None:
-            raise ValueError("At least one of benchmark or accuracy must be provided.")
+            raise ValueError("At least one filed must be provided for MetadataUpdate.")
         return value
 
     def to_json(self) -> Dict:
