@@ -35,5 +35,10 @@ jobs:
           cd python
           poetry build
 
+      - name: Move distribution files
+        run: |
+          cd python
+          mv dist/* ../dist
+
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
