@@ -5,13 +5,9 @@ on:
 jobs:
   pypi-publish:
     name: Upload release to PyPI
-    runs-on: ubuntu-latest
-    
-    # Specifying a GitHub environment is optional, but strongly encouraged
+    runs-on: ubuntu-latest    
     environment: pypi-package
-    permissions:
-      # IMPORTANT: this permission is mandatory for trusted publishing
-      id-token: write
+
     steps:
       - uses: actions/checkout@v4
       
@@ -29,13 +25,11 @@ jobs:
       
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/python" >> $GITHUB_ENV
-      
-      - name: Run tests
+
+      - name: Set PyPI credentials
+        run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Publish to PyPI
         run: |
           cd python
-          poetry build
-
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: python/dist
+          poetry publish --build
