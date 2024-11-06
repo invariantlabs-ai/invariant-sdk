@@ -1,9 +1,12 @@
 """Model class for the PushTraces API."""
 
+import re
+
 from typing import Any, Dict, List, Optional
 from invariant_sdk.types.annotations import AnnotationCreate
 from pydantic import BaseModel
 
+DATASET_NAME_REGEX = re.compile(r"^[a-zA-Z0-9-_]+$")
 
 class PushTracesRequest(BaseModel):
     """Model class which holds the PushTraces API request."""
@@ -16,7 +19,10 @@ class PushTracesRequest(BaseModel):
     def __init__(self, **data: Any):
         # Call the validation method
         self.validate_fields(
-            data.get("messages"), data.get("annotations"), data.get("metadata")
+            data.get("messages"),
+            data.get("annotations"),
+            data.get("metadata"),
+            data.get("dataset"),
         )
         super().__init__(**data)
 
@@ -34,6 +40,7 @@ class PushTracesRequest(BaseModel):
         messages: List[List[Dict]],
         annotations: Optional[List[List[AnnotationCreate]]],
         metadata: Optional[List[Dict]],
+        dataset: Optional[str],
     ):
         """
         Validate the fields of the PushTracesRequest object.
@@ -42,6 +49,7 @@ class PushTracesRequest(BaseModel):
             messages (List[List[Trace]]): The messages to validate.
             annotations (Optional[List[AnnotationCreate]]): The annotations to validate.
             metadata (Optional[List[Metadata]]): The metadata to validate.
+            dataset (Optional[str]): The dataset name to validate.
 
         Raises:
             ValueError: If any validation fails.
@@ -72,6 +80,10 @@ class PushTracesRequest(BaseModel):
             isinstance(metadatum, Dict) for metadatum in metadata
         ):
             raise ValueError("metadata must be a list of Dict type")
+        if dataset is not None and not isinstance(dataset, str):
+            raise ValueError("dataset must be a string")
+        if dataset is not None and not DATASET_NAME_REGEX.match(dataset):
+            raise ValueError("dataset name can only contain A-Z, a-z, 0-9, - and _")
 
 
 class PushTracesResponse(BaseModel):

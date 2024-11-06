@@ -35,14 +35,14 @@ def test_validate_fields_request_valid_data(
         messages=valid_messages,
         annotations=valid_annotations,
         metadata=valid_metadata,
-        dataset="example dataset",
+        dataset="example-dataset",
     )
 
     assert (
         request.messages == valid_messages
         and request.annotations == valid_annotations
         and request.metadata == valid_metadata
-        and request.dataset == "example dataset"
+        and request.dataset == "example-dataset"
     )
 
 
@@ -129,6 +129,30 @@ def test_validate_fields_request_none_values(valid_messages):
         and request.metadata is None
     )
 
+def test_validate_fields_dataset_name_non_string(valid_messages):
+    """Test PushTracesRequest.validate_fields with non-string dataset name."""
+    for invalid_dataset in [123, 12.3]:
+        with pytest.raises(ValueError, match="dataset must be a string"):
+            _ = PushTracesRequest(
+                messages=valid_messages,
+                annotations=None,
+                metadata=None,
+                dataset=invalid_dataset,
+            )
+
+def test_validate_fields_dataset_name_with_illegal_characters_fails(valid_messages):
+    """Test PushTracesRequest.validate_fields with illegal characters in dataset."""
+    for invalid_character in "!@#$%^&*()+=':;<>,.?/\\|`~":
+        dataset_name = f"some{invalid_character}name"
+        with pytest.raises(
+            ValueError, match="dataset name can only contain A-Z, a-z, 0-9, - and _"
+        ):
+            _ = PushTracesRequest(
+                messages=valid_messages,
+                annotations=None,
+                metadata=None,
+                dataset=dataset_name,
+            )
 
 def test_request_to_json(valid_messages, valid_annotations, valid_metadata):
     """Test converting PushTracesRequest to a JSON object."""
