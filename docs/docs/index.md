@@ -1,49 +1,104 @@
-# Welcome to Invariant
+---
+title: Getting Started
+---
 
-<div class='subtitle'>Getting started with the Invariant SDK</div>
+# Getting Started With Explorer
 
-The Invariant SDK enables you to share, analyze and collaborate on AI agent runtime traces. This documentation will guide you through the process of setting up the SDK, capturing traces, and uploading them to the Invariant Explorer. The SDK currently only supports Python.
+<div class='subtitle'>Learn how to upload your AI agent traces to the Invariant Explorer</div>
 
-## Install via pip directly
-```bash
-pip install "git+https://github.com/invariantlabs-ai/invariant-sdk.git#egg=invariant_sdk&subdirectory=python"
-```
+This quickstart guide will walk you through the process of setting up the Invariant SDK to upload your AI agent traces to the <img class='inline-invariant' src="assets/logo.svg"/> [Invariant Explorer](https://explorer.invariantlabs.ai). 
 
-## Include via requirements.txt
-You can include the Invariant SDK in your `requirements.txt` file by adding the following line:
+You can use Explorer to visualize, analyze, and collaborate on your AI agent traces, as well as compare them with other agents and models.
 
-```
-git+https://github.com/invariantlabs-ai/invariant-sdk.git#egg=invariant_sdk&subdirectory=python
-```
+## 1. Create an Explorer Account
 
-## Include via pyproject.toml
-To include the Invariant SDK in your `pyproject.toml` file, follow these steps:
+First, navigate to the <img class='inline-invariant' src="assets/logo.svg"/> [Invariant Explorer](https://explorer.invariantlabs.ai) and create an account via GitHub Sign-In.
 
-### Using `poetry`
-1. Add the following line under the `[tool.poetry.dependencies]` section in `pyproject.toml`:
+Once you have created an account, go to your [User Settings](https://explorer.invariantlabs.ai/settings) and generate an API key.
 
-```toml
-invariant_sdk = { git = "https://github.com/invariantlabs-ai/invariant-sdk.git", subdirectory = "python" }
-```
-
-2. Run the following command to install the dependencies:
+Make note of your API key, as you will need it to authenticate your uploads. If you're running in a shell, you can export the API key now as an environment variable:
 
 ```bash
-poetry install
+export INVARIANT_API_KEY=<your-api-key>
 ```
 
-### Using `hatch`
-1. Add the following line under the `dependencies` section in `pyproject.toml`:
+## 2. Install the Invariant SDK
 
-```toml
-invariant_sdk = { url = "git+https://github.com/invariantlabs-ai/invariant-sdk.git#egg=invariant_sdk&subdirectory=python" }
-```
-
-2. Run the following command to install the dependencies:
+Next, install the Invariant SDK in your Python environment, by running the following command. See [Installation](installation.md) for alternative methods using different package managers.
 
 ```bash
-hatch env update
+pip install invariant-sdk
 ```
 
-## Include directly via PyPi
-Coming soon!
+## 3. Prepare Your Traces and Upload
+
+Now, you can start preparing your AI agent traces for upload. The Invariant SDK then provides a `Client` class that you can use to upload your traces in an Invariant-compatible format:
+
+```python
+from invariant_sdk.client import Client
+
+traces = [
+    # Task 1: Send an email to mom
+    [
+        {
+            "role": "user",
+            "content": "Can you send an email to my mom, saying I'll be late for dinner?",
+        },
+        {
+            "role": "assistant",
+            "content": "Sending an email to your mom now.",
+            "tool_calls": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "send_email",
+                        "arguments": {
+                            "to": "mom@mail.com",
+                            "subject": "Running late, sorry!",
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+]
+
+client = Client()
+client.create_request_and_push_trace(traces, dataset="my-first-dataset")
+```
+
+## Work With Your Traces in Explorer
+
+You can now navigate to the following URL to view your uploaded traces:
+
+```
+https://explorer.invariantlabs.ai/<your_username>/my-first-dataset/t/1
+```
+
+You can also use the Invariant Explorer to analyze your traces, compare them with other agents, and collaborate with your team.
+
+To learn more about what you can do with Explorer, check out any of the following chapters:
+
+<div class='tiles'>
+
+<a href="client_setup.html" class='tile'>
+    <span class='tile-title'>Explore the API →</span>
+    <span class='tile-description'>Learn more about the Invariant API and how to upload your traces</span>
+</a>
+
+<a href="traces.html" class='tile'>
+    <span class='tile-title'>Trace Format →</span>
+    <span class='tile-description'>Learn about the Invariant trace format and how to structure your traces for ingestion</span>
+</a>
+
+<a href="client_setup.html" class='tile'>
+    <span class='tile-title'>Client Setup →</span>
+    <span class='tile-description'>Setting up endpoints and authentication for the Invariant SDK</span>
+</a>
+
+<a href="push_traces.html" class='tile'>
+    <span class='tile-title'>Pushing Traces →</span>
+    <span class='tile-description'>Learn about traces, datasets and annotations.</span>
+</a>
+
+</div>
