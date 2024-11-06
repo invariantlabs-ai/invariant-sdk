@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "invariant_sdk"
+name = "invariant-sdk"
 version = "0.0.1"
 description = "SDK for Invariant APIs"
 authors = ["InvariantLabs <hello@invariantlabs.ai>"]
