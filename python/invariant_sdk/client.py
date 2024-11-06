@@ -11,6 +11,7 @@ from invariant_sdk.types.exceptions import (
     InvariantNotFoundError,
 )
 from invariant_sdk.types.push_traces import PushTracesRequest, PushTracesResponse
+from invariant_sdk.types.update_dataset_metadata import MetadataUpdate, UpdateDatasetMetadataRequest
 
 import requests
 import invariant_sdk.utils as invariant_utils
@@ -19,6 +20,7 @@ import invariant_sdk.utils as invariant_utils
 DEFAULT_CONNECTION_TIMEOUT_MS = 5_000
 DEFAULT_READ_TIMEOUT_MS = 20_000
 PUSH_TRACE_API_PATH = "/api/v1/push/trace"
+DATASET_METADATA_API_PATH = "/api/v1/dataset/metadata"
 
 
 def _close_session(session: requests.Session) -> None:
@@ -205,12 +207,12 @@ class Client:
         request_kwargs: Optional[Mapping] = None,
     ) -> PushTracesResponse:
         """
-        Push trace data to the Invariant API.
+        Push trace data.
 
         Args:
-            messages (List[List[Dict]]): The messages to push to the Invariant API.
-            annotations (Optional[List[List[Dict]]]): The annotations to push to the Invariant API.
-            metadata (Optional[List[Dict]]): The metadata to push to the Invariant API.
+            messages (List[List[Dict]]): The messages containing the trace data.
+            annotations (Optional[List[List[Dict]]]): The annotations corresponding to the messages.
+            metadata (Optional[List[Dict]]): The metadata corresponding to the messages.
             request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
                                       the requests method.
 
@@ -228,3 +230,95 @@ class Client:
             dataset=dataset,
         )
         return self.push_trace(request, request_kwargs)
+
+    def get_dataset_metadata(
+        self,
+        dataset_name: str,
+        request_kwargs: Optional[Mapping] = None,
+    ) -> Dict:
+        """
+        Get the metadata for a dataset.
+
+        Args:
+            dataset_name (str): The name of the dataset to get metadata for.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
+                                      the requests method.
+
+        Returns:
+            Dict: The response from the API.
+        """
+        if request_kwargs is None:
+            request_kwargs = {}
+        http_response = self.request(
+            method="GET",
+            pathname=f"{DATASET_METADATA_API_PATH}/{dataset_name}",
+            request_kwargs={
+                **request_kwargs,
+                "headers": {
+                    "Content-Type": "application/json",
+                    **request_kwargs.get("headers", {}),
+                },
+            },
+        )
+        return http_response.json()
+
+    def update_dataset_metadata(
+        self,
+        request: UpdateDatasetMetadataRequest,
+        request_kwargs: Optional[Mapping] = None,
+    ) -> Dict:
+        """
+        Update the metadata for a dataset.
+
+        Args:
+            request (UpdateDatasetMetadataRequest): The request object containing the dataset name,
+                                                    and metadata to update.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
+                                                the requests method.
+
+        Returns:
+            Dict: The response from the API.
+        """
+        if request_kwargs is None:
+            request_kwargs = {}
+        http_response = self.request(
+            method="PUT",
+            pathname=f"{DATASET_METADATA_API_PATH}/{request.dataset_name}",
+            request_kwargs={
+                **request_kwargs,
+                "headers": {
+                    "Content-Type": "application/json",
+                    **request_kwargs.get("headers", {}),
+                },
+                "json": request.metadata.to_json(),
+            },
+        )
+        return http_response.json()
+
+    def create_request_and_update_dataset_metadata(
+        self,
+        dataset_name: str,
+        benchmark: Optional[str] = None,
+        accuracy: Optional[Union[float, int]] = None,
+        request_kwargs: Optional[Mapping] = None,
+    ) -> Dict:
+        """
+        Update the metadata for a dataset.
+
+        Args:
+            dataset_name (str): The name of the dataset to update metadata for.
+            benchmark (str): The benchmark name to update.
+            accuracy (Union[float, int]): The accuracy to update.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
+                                                the requests method.
+
+        Returns:
+            Dict: The response from the API.
+        """
+        if request_kwargs is None:
+            request_kwargs = {}
+        request = UpdateDatasetMetadataRequest(
+            dataset_name=dataset_name,
+            metadata=MetadataUpdate(benchmark=benchmark, accuracy=accuracy),
+        )
+        return self.update_dataset_metadata(request, request_kwargs)

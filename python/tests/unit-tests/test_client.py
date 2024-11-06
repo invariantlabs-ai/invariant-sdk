@@ -7,6 +7,10 @@ import requests
 from invariant_sdk.client import Client
 from invariant_sdk.types.annotations import AnnotationCreate
 from invariant_sdk.types.push_traces import PushTracesRequest
+from invariant_sdk.types.update_dataset_metadata import (
+    UpdateDatasetMetadataRequest,
+    MetadataUpdate,
+)
 from invariant_sdk.types.exceptions import (
     InvariantAPITimeoutError,
     InvariantNotFoundError,
@@ -392,4 +396,175 @@ def test_push_trace_generic_exception(
     assert (
         str(exc_info.value)
         == "Error calling method: POST for path: /api/v1/push/trace."
+    )
+
+
+@mock.patch("invariant_sdk.client.requests.Session")
+def test_get_dataset_metadata(mock_session_cls: mock.Mock, set_env_vars):  # pylint: disable=unused-argument
+    """Test the get_dataset_metadata method with default headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "created_on": "2024-11-06 13:40:52",
+        "benchmark": "benchmark_name",
+        "accuracy": 95.5,
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    client = Client(timeout_ms=(3000, 7000))
+    metadata = client.get_dataset_metadata(
+        dataset_name="example_dataset",
+    )
+    assert metadata.get("created_on") == "2024-11-06 13:40:52"
+    assert metadata.get("benchmark") == "benchmark_name"
+    assert metadata.get("accuracy") == 95.5
+
+    # Assert that the request method was called once with the expected arguments.
+    mock_session.request.assert_called_once_with(
+        method="GET",
+        url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
+        timeout=(3.0, 7.0),
+        headers={
+            "Authorization": "Bearer test-key",  # Default API key from env.
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        stream=False,
+    )
+
+@mock.patch("invariant_sdk.client.requests.Session")
+def test_update_dataset_metadata(
+    mock_session_cls: mock.Mock, set_env_vars
+):  # pylint: disable=unused-argument
+    """Test the create_request_and_update_dataset_metadata method with default headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "created_on": "2024-11-06 13:40:52",
+        "benchmark": "new_benchmark_name",
+        "accuracy": 99.5,
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    client = Client(timeout_ms=(3000, 7000))
+
+    update_metadata_request = UpdateDatasetMetadataRequest(
+        dataset_name="example_dataset",
+        metadata=MetadataUpdate(benchmark="new_benchmark_name", accuracy=99.5),
+    )
+
+    # Pass headers in request_kwargs to test that it is passed through to the API.
+    metadata = client.update_dataset_metadata(
+        update_metadata_request
+    )
+    assert metadata.get("created_on") == "2024-11-06 13:40:52"
+    assert metadata.get("benchmark") == "new_benchmark_name"
+    assert metadata.get("accuracy") == 99.5
+
+    # Assert that the request method was called once with the expected arguments.
+    mock_session.request.assert_called_once_with(
+        method="PUT",
+        url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
+        json=update_metadata_request.metadata.to_json(),
+        timeout=(3.0, 7.0),
+        headers={
+            "Authorization": "Bearer test-key",  # Default API key from env.
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        stream=False,
+    )
+
+
+@mock.patch("invariant_sdk.client.requests.Session")
+def test_update_dataset_metadata_with_overridden_headers(
+    mock_session_cls: mock.Mock, set_env_vars
+):  # pylint: disable=unused-argument
+    """Test the create_request_and_update_dataset_metadata method with override headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "created_on": "2024-11-06 13:40:52",
+        "benchmark": "new_benchmark_name",
+        "accuracy": 99.5,
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    client = Client(timeout_ms=(3000, 7000))
+
+    update_metadata_request = UpdateDatasetMetadataRequest(
+        dataset_name="example_dataset",
+        metadata=MetadataUpdate(benchmark="new_benchmark_name", accuracy=99.5),
+    )
+
+    # Pass headers in request_kwargs to test that it is passed through to the API.
+    metadata = client.update_dataset_metadata(
+        update_metadata_request,
+        request_kwargs={
+            "headers": {
+                "Authorization": "Bearer overridden-key",
+                "Content-Type": "text/plain",
+                "Accept-Language": "en",
+            },
+        },
+    )
+    assert metadata.get("created_on") == "2024-11-06 13:40:52"
+    assert metadata.get("benchmark") == "new_benchmark_name"
+    assert metadata.get("accuracy") == 99.5
+
+    # Assert that the request method was called once with the expected arguments.
+    mock_session.request.assert_called_once_with(
+        method="PUT",
+        url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
+        json=update_metadata_request.metadata.to_json(),
+        timeout=(3.0, 7.0),
+        headers={
+            "Authorization": "Bearer overridden-key",  # Overridden.
+            "Accept": "application/json",  # Default.
+            "Content-Type": "text/plain",  # Overridden.
+            "Accept-Language": "en",  # Overridden.
+        },
+        stream=False,
+    )
+
+
+@mock.patch("invariant_sdk.client.requests.Session")
+def test_create_request_and_update_dataset_metadata(
+    mock_session_cls: mock.Mock, set_env_vars
+):  # pylint: disable=unused-argument
+    """Test the create_request_and_update_dataset_metadata method with default headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "created_on": "2024-11-06 13:40:52",
+        "accuracy": 99.5,
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    client = Client(timeout_ms=(3000, 7000))
+
+    metadata = client.create_request_and_update_dataset_metadata(
+        dataset_name="example_dataset",
+        accuracy=99.5,
+    )
+
+    assert metadata.get("created_on") == "2024-11-06 13:40:52"
+    assert metadata.get("accuracy") == 99.5
+
+    # Assert that the request method was called once with the expected arguments.
+    mock_session.request.assert_called_once_with(
+        method="PUT",
+        url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
+        timeout=(3.0, 7.0),
+        json={"accuracy": 99.5},
+        headers={
+            "Authorization": "Bearer test-key",  # Default API key from env.
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        stream=False,
     )
