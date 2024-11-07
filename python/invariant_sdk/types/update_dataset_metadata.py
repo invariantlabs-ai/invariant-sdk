@@ -3,34 +3,38 @@
 from typing import Dict, Optional, Union
 from pydantic import BaseModel, ConfigDict, field_validator
 
+
 class MetadataUpdate(BaseModel):
     """Model for dataset metadata update."""
 
     benchmark: Optional[str] = None
     accuracy: Optional[Union[float, int]] = None
+    name: Optional[str] = None
 
     # Enable strict type checking.
     model_config = ConfigDict(strict=True)
 
     @field_validator("accuracy")
     @staticmethod
-    def validate_accuracy(value: Optional[Union[float, int]]) -> Optional[Union[float, int]]:
+    def validate_accuracy(
+        value: Optional[Union[float, int]],
+    ) -> Optional[Union[float, int]]:
         """Ensure accuracy is non-negative, if provided."""
         if value is not None and value < 0:
             raise ValueError("Accuracy must be a non-negative float or int.")
         return value
 
-    @field_validator("benchmark")
+    @field_validator("benchmark", "name")
     @staticmethod
-    def validate_benchmark(value: Optional[str]) -> Optional[str]:
+    def validate_non_empty_string(value: Optional[str], field) -> Optional[str]:
         """Ensure benchmark is a non-empty string, if provided."""
         if value is not None and not value.strip():
-            raise ValueError("Benchmark must be a non-empty string.")
+            raise ValueError(f"{field.field_name} must be a non-empty string.")
         return value
 
     def to_json(self) -> Dict:
         """Convert the instance to a JSON-serializable dictionary."""
-        return self.model_dump()
+        return {k: v for k, v in self.model_dump().items() if v is not None}
 
 
 class UpdateDatasetMetadataRequest(BaseModel):
@@ -55,8 +59,8 @@ class UpdateDatasetMetadataRequest(BaseModel):
     @staticmethod
     def validate_metadata(value: MetadataUpdate) -> MetadataUpdate:
         """Ensure at least one field is provided in metadata."""
-        if value.accuracy is None and value.benchmark is None:
-            raise ValueError("At least one filed must be provided for MetadataUpdate.")
+        if value.accuracy is None and value.benchmark is None and value.name is None:
+            raise ValueError("At least one field must be provided for MetadataUpdate.")
         return value
 
     def to_json(self) -> Dict:

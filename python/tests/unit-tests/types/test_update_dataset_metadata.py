@@ -47,7 +47,7 @@ def test_update_dataset_metadata_request_no_accuracy():
 def test_update_dataset_metadata_request_no_fields():
     """Test creating the UpdateDatasetMetadataRequest class with no fields."""
     with pytest.raises(
-        ValueError, match="At least one filed must be provided for MetadataUpdate"
+        ValueError, match="At least one field must be provided for MetadataUpdate"
     ):
         UpdateDatasetMetadataRequest(
             dataset_name="example_dataset", metadata=MetadataUpdate()
@@ -65,10 +65,18 @@ def test_update_dataset_metadata_request_invalid_dataset_name():
 
 def test_update_dataset_metadata_request_invalid_benchmark():
     """Test creating the UpdateDatasetMetadataRequest class with an invalid benchmark."""
-    with pytest.raises(ValueError, match="Benchmark must be a non-empty string."):
+    with pytest.raises(ValueError, match="benchmark must be a non-empty string."):
         UpdateDatasetMetadataRequest(
             dataset_name="example_dataset",
             metadata=MetadataUpdate(benchmark="", accuracy=95.5),
+        )
+
+def test_update_dataset_metadata_request_invalid_name():
+    """Test creating the UpdateDatasetMetadataRequest class with an invalid benchmark."""
+    with pytest.raises(ValueError, match="name must be a non-empty string."):
+        UpdateDatasetMetadataRequest(
+            dataset_name="example_dataset",
+            metadata=MetadataUpdate(benchmark="xyz", accuracy=95.5, name=""),
         )
 
 
@@ -114,11 +122,11 @@ def test_update_dataset_metadata_to_json():
     """Test the UpdateDatasetMetadataRequest to_json method."""
     request = UpdateDatasetMetadataRequest(
         dataset_name="example_dataset",
-        metadata=MetadataUpdate(benchmark="benchmark_name", accuracy=95.5),
+        metadata=MetadataUpdate(benchmark="benchmark_name", accuracy=95.5, name="name"),
     )
     assert request.to_json() == {
         "dataset_name": "example_dataset",
-        "metadata": {"benchmark": "benchmark_name", "accuracy": 95.5},
+        "metadata": {"benchmark": "benchmark_name", "accuracy": 95.5, "name": "name"},
         "replace_all": False,
     }
 
@@ -126,4 +134,4 @@ def test_update_dataset_metadata_to_json():
 def test_metadata_update_to_json():
     """Test the MetadataUpdate to_json method."""
     metadata_update = MetadataUpdate(accuracy=95.5)
-    assert metadata_update.to_json() == {"benchmark": None, "accuracy": 95.5}
+    assert metadata_update.to_json() == {"accuracy": 95.5}

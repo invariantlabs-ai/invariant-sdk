@@ -489,6 +489,7 @@ def test_update_dataset_metadata_with_overridden_headers(
         "created_on": "2024-11-06 13:40:52",
         "benchmark": "new_benchmark_name",
         "accuracy": 99.5,
+        "name": "new_name",
     }
     mock_session = mock.Mock()
     mock_session.request.return_value = mock_response
@@ -498,7 +499,7 @@ def test_update_dataset_metadata_with_overridden_headers(
 
     update_metadata_request = UpdateDatasetMetadataRequest(
         dataset_name="example_dataset",
-        metadata=MetadataUpdate(accuracy=99.5),
+        metadata=MetadataUpdate(accuracy=99.5, name="new_name"),
     )
 
     # Pass headers in request_kwargs to test that it is passed through to the API.
@@ -515,12 +516,13 @@ def test_update_dataset_metadata_with_overridden_headers(
     assert metadata.get("created_on") == "2024-11-06 13:40:52"
     assert metadata.get("benchmark") == "new_benchmark_name"
     assert metadata.get("accuracy") == 99.5
+    assert metadata.get("name") == "new_name"
 
     # Assert that the request method was called once with the expected arguments.
     mock_session.request.assert_called_once_with(
         method="PUT",
         url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
-        json={"metadata": {"accuracy": 99.5, "benchmark": None}, "replace_all": False},
+        json={"metadata": {"accuracy": 99.5, "name": "new_name"}, "replace_all": False},
         timeout=(3.0, 7.0),
         headers={
             "Authorization": "Bearer overridden-key",  # Overridden.
@@ -562,7 +564,7 @@ def test_create_request_and_update_dataset_metadata(
         url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
         timeout=(3.0, 7.0),
         json={
-            "metadata": {"benchmark": "some_benchmark", "accuracy": None},
+            "metadata": {"benchmark": "some_benchmark"},
             "replace_all": False,
         },
         headers={
