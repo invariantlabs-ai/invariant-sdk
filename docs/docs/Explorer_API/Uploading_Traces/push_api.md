@@ -87,7 +87,7 @@ The dataset name. Default is `None`.
 
 There are two SDK methods to push traces: `push_trace` and `create_request_and_push_trace`. The former accepts the `PushTracesRequest` type as an argument and the latter accepts Python-native types as arguments.
 
-### `invariant_sdk.push_trace` 
+### `push_trace` 
 The `push_trace method` is used to push trace data to the Invariant API using a pre-constructed request object.
 
 ##### `request` <span class='type'>PushTracesRequest</span> <span class='required'/>
@@ -135,7 +135,7 @@ The response object from the Invariant API.
     response = client.push_trace(request)
     ```
 
-### `invariant_sdk.create_request_and_push_trace`
+### `create_request_and_push_trace`
 
 The `create_request_and_push_trace` method is used to push trace data to the Invariant API. It creates a request object from the provided messages, annotations, and metadata, and then pushes this data to the API.
 
