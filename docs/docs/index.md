@@ -67,6 +67,8 @@ client = Client()
 client.create_request_and_push_trace(traces, dataset="my-first-dataset")
 ```
 
+This will upload your traces to the Invariant Explorer under a new dataset named `my-first-dataset`. If the corresponding dataset already exists, the traces will be appended to it.
+
 ## Work With Your Traces in Explorer
 
 You can now navigate to the following URL to view your uploaded traces:
@@ -81,22 +83,22 @@ To learn more about what you can do with Explorer, check out any of the followin
 
 <div class='tiles'>
 
-<a href="client_setup.html" class='tile'>
-    <span class='tile-title'>Explore the API →</span>
-    <span class='tile-description'>Learn more about the Invariant API and how to upload your traces</span>
+<a href="benchmarks.html" class='tile'>
+    <span class='tile-title'>Benchmarks →</span>
+    <span class='tile-description'>Submit your AI agent to the Invariant benchmark registry for comparison</span>
 </a>
 
-<a href="traces.html" class='tile'>
+<a href="Explorer_API/traces.html" class='tile'>
     <span class='tile-title'>Trace Format →</span>
     <span class='tile-description'>Learn about the Invariant trace format and how to structure your traces for ingestion</span>
 </a>
 
-<a href="client_setup.html" class='tile'>
+<a href="Explorer_API/client_setup.html" class='tile'>
     <span class='tile-title'>Client Setup →</span>
     <span class='tile-description'>Setting up endpoints and authentication for the Invariant SDK</span>
 </a>
 
-<a href="push_traces.html" class='tile'>
+<a href="Explorer_API/Uploading_Traces/push_api.html" class='tile'>
     <span class='tile-title'>Pushing Traces →</span>
     <span class='tile-description'>Learn about traces, datasets and annotations.</span>
 </a>

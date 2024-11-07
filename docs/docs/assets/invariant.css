@@ -119,10 +119,14 @@ a:visted {
 
 div.subtitle {
     position: relative;
-    top: -10pt;
+    top: -15pt;
     font-size: 18pt;
     opacity: 0.5;
-    margin-bottom: 20pt;
+    margin-bottom: 0pt;
+}
+
+p>img {
+    border-radius: 4pt;
 }
 
 .md-footer {
@@ -205,15 +209,83 @@ blockquote {
     border-radius: 5pt;
     font-size: 12pt;
     border: 1pt solid #3E3AFF;
+    background-color: hsl(241, 100%, 99.5%);
+    overflow: hidden;
     color: black;
+    margin-top: 30pt !important;
 }
 
 blockquote pre {
     position: relative;
-    margin-left: -9.5pt;
+    margin-left: -10pt;
 }
 
 blockquote p {
     font-size: 12pt !important;
     color: #3A3E60;
+}
+
+figure {
+    max-width: 400pt !important;
+    display: block !important;
+    margin: 40pt auto !important;
+}
+
+figure.wide {
+    max-width: 500pt !important;
+}
+
+h2, h3, h4 {
+    margin-top: 40pt !important;
+}
+
+h2 {
+    border-top: 1pt solid #e5e5e58e;
+    padding-top: 30pt;
+    margin-top: 30pt !important;
+}
+
+h5 {
+    text-transform: none !important;
+    border-top: 1pt solid #e5e5e58e;
+    padding-top: 10pt;
+    font-size: 14pt !important;
+    line-height: 10pt !important;
+}
+
+h5 span.type {
+    font-size: 10pt;
+    position: relative;
+    top: -0.07em;
+    font-family: monospace;
+}
+
+h5 span.required:after {
+    content: "Required";
+    color: red;
+    font-size: 10pt;
+    margin-left: 10pt;
+    font-weight: 400;
+    display: inline-block;
+}
+
+h5 span.optional:after {
+    content: "Optional";
+    color: green;
+    opacity: 0.5;
+    font-size: 10pt;
+    margin-left: 10pt;
+    font-weight: 400;
+    display: inline-block;
+}
+
+ul {
+    margin-top: 0pt !important;
+    list-style-type: none !important;
+}
+
+/* p when preceded by h5 */
+h5 + p, h5 + p + p, h5 + p + p + p, h5 + p + p + p + p {
+    font-size: 12pt !important;
+    margin-top: -5pt !important;
 }
