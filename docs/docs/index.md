@@ -69,6 +69,8 @@ client.create_request_and_push_trace(traces, dataset="my-first-dataset")
 
 This will upload your traces to the Invariant Explorer under a new dataset named `my-first-dataset`. If the corresponding dataset already exists, the traces will be appended to it.
 
+To learn more about the expected trace format see the chapter on the [trace format requirements](Explorer_API/2_traces.md).
+
 ## Work With Your Traces in Explorer
 
 You can now navigate to the following URL to view your uploaded traces:

@@ -49,8 +49,14 @@ For instance, to associate your agent dataset with the `webarena` benchmark and 
 }
 ```
 
-### Step 4: Submit Your Results to the Benchmark Registry
+### Step 4: Ensure Your Dataset is Public
 
-Submit your agent dataset to be included in the official benchmark registry by contacting the Invariant Labs team at [registry@invariantlabs.ai](mailto:registry@invariantlabs.ai).
+To enable comparison and inspection of your agent dataset, ensure that the dataset is public and accessible to everyone on the web. You can do so by updating the dataset's visibility settings on the Explorer.
+
+<img src='./assets/make-public.png' alt='Make Public' style='width: 80%; display: block; margin: 0 auto;'>
+
+### Step 5: Submit Your Results to the Benchmark Registry
+
+Submit your agent dataset to be included in the official benchmark registry by contacting Invariant Labs at [registry@invariantlabs.ai](mailto:registry@invariantlabs.ai).
 
 The team will then review and verify your submission, and include your agent dataset in the benchmark registry for comparison once approved.
