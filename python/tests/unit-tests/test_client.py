@@ -433,10 +433,9 @@ def test_get_dataset_metadata(mock_session_cls: mock.Mock, set_env_vars):  # pyl
         stream=False,
     )
 
+
 @mock.patch("invariant_sdk.client.requests.Session")
-def test_update_dataset_metadata(
-    mock_session_cls: mock.Mock, set_env_vars
-):  # pylint: disable=unused-argument
+def test_update_dataset_metadata(mock_session_cls: mock.Mock, set_env_vars):  # pylint: disable=unused-argument
     """Test the create_request_and_update_dataset_metadata method with default headers passed."""
     mock_response = mock.Mock()
     mock_response.json.return_value = {
@@ -452,13 +451,12 @@ def test_update_dataset_metadata(
 
     update_metadata_request = UpdateDatasetMetadataRequest(
         dataset_name="example_dataset",
+        replace_all=True,
         metadata=MetadataUpdate(benchmark="new_benchmark_name", accuracy=99.5),
     )
 
     # Pass headers in request_kwargs to test that it is passed through to the API.
-    metadata = client.update_dataset_metadata(
-        update_metadata_request
-    )
+    metadata = client.update_dataset_metadata(update_metadata_request)
     assert metadata.get("created_on") == "2024-11-06 13:40:52"
     assert metadata.get("benchmark") == "new_benchmark_name"
     assert metadata.get("accuracy") == 99.5
@@ -467,7 +465,10 @@ def test_update_dataset_metadata(
     mock_session.request.assert_called_once_with(
         method="PUT",
         url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
-        json=update_metadata_request.metadata.to_json(),
+        json={
+            "metadata": {"benchmark": "new_benchmark_name", "accuracy": 99.5},
+            "replace_all": True,
+        },
         timeout=(3.0, 7.0),
         headers={
             "Authorization": "Bearer test-key",  # Default API key from env.
@@ -497,7 +498,7 @@ def test_update_dataset_metadata_with_overridden_headers(
 
     update_metadata_request = UpdateDatasetMetadataRequest(
         dataset_name="example_dataset",
-        metadata=MetadataUpdate(benchmark="new_benchmark_name", accuracy=99.5),
+        metadata=MetadataUpdate(accuracy=99.5),
     )
 
     # Pass headers in request_kwargs to test that it is passed through to the API.
@@ -519,7 +520,7 @@ def test_update_dataset_metadata_with_overridden_headers(
     mock_session.request.assert_called_once_with(
         method="PUT",
         url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
-        json=update_metadata_request.metadata.to_json(),
+        json={"metadata": {"accuracy": 99.5, "benchmark": None}, "replace_all": False},
         timeout=(3.0, 7.0),
         headers={
             "Authorization": "Bearer overridden-key",  # Overridden.
@@ -549,7 +550,7 @@ def test_create_request_and_update_dataset_metadata(
 
     metadata = client.create_request_and_update_dataset_metadata(
         dataset_name="example_dataset",
-        accuracy=99.5,
+        benchmark="some_benchmark",
     )
 
     assert metadata.get("created_on") == "2024-11-06 13:40:52"
@@ -560,7 +561,10 @@ def test_create_request_and_update_dataset_metadata(
         method="PUT",
         url="https://default.api.url/api/v1/dataset/metadata/example_dataset",
         timeout=(3.0, 7.0),
-        json={"accuracy": 99.5},
+        json={
+            "metadata": {"benchmark": "some_benchmark", "accuracy": None},
+            "replace_all": False,
+        },
         headers={
             "Authorization": "Bearer test-key",  # Default API key from env.
             "Accept": "application/json",

@@ -290,7 +290,10 @@ class Client:
                     "Content-Type": "application/json",
                     **request_kwargs.get("headers", {}),
                 },
-                "json": request.metadata.to_json(),
+                "json": {
+                  "metadata": request.metadata.to_json(),
+                  "replace_all": request.replace_all,
+                }
             },
         )
         return http_response.json()
@@ -298,6 +301,7 @@ class Client:
     def create_request_and_update_dataset_metadata(
         self,
         dataset_name: str,
+        replace_all: Optional[bool] = False,
         benchmark: Optional[str] = None,
         accuracy: Optional[Union[float, int]] = None,
         request_kwargs: Optional[Mapping] = None,
@@ -319,6 +323,7 @@ class Client:
             request_kwargs = {}
         request = UpdateDatasetMetadataRequest(
             dataset_name=dataset_name,
+            replace_all=replace_all,
             metadata=MetadataUpdate(benchmark=benchmark, accuracy=accuracy),
         )
         return self.update_dataset_metadata(request, request_kwargs)

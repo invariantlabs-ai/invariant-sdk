@@ -11,11 +11,13 @@ def test_update_dataset_metadata_request_valid():
     """Test creating the UpdateDatasetMetadataRequest class with valid data."""
     request = UpdateDatasetMetadataRequest(
         dataset_name="example_dataset",
+        replace_all=True,
         metadata=MetadataUpdate(benchmark="benchmark_name", accuracy=95.5),
     )
     assert request.dataset_name == "example_dataset"
     assert request.metadata.benchmark == "benchmark_name"
     assert request.metadata.accuracy == 95.5
+    assert request.replace_all is True
 
 
 def test_update_dataset_metadata_request_no_benchmark():
@@ -27,6 +29,7 @@ def test_update_dataset_metadata_request_no_benchmark():
     assert request.dataset_name == "example_dataset"
     assert request.metadata.benchmark is None
     assert request.metadata.accuracy == 95.5
+    assert request.replace_all is False
 
 
 def test_update_dataset_metadata_request_no_accuracy():
@@ -38,6 +41,7 @@ def test_update_dataset_metadata_request_no_accuracy():
     assert request.dataset_name == "example_dataset"
     assert request.metadata.accuracy is None
     assert request.metadata.benchmark == "benchmark_name"
+    assert request.replace_all is False
 
 
 def test_update_dataset_metadata_request_no_fields():
@@ -78,6 +82,16 @@ def test_update_dataset_metadata_request_invalid_accuracy():
             metadata=MetadataUpdate(benchmark="benchmark_name", accuracy=-1),
         )
 
+def test_update_dataset_metadata_request_invalid_replace_all():
+    """Test creating the UpdateDatasetMetadataRequest class with an invalid accuracy."""
+    with pytest.raises(
+        ValueError, match="should be a valid boolean"
+    ):
+        UpdateDatasetMetadataRequest(
+            dataset_name="example_dataset",
+            replace_all="Random",
+            metadata=MetadataUpdate(benchmark="benchmark_name", accuracy=1),
+        )
 
 def test_update_dataset_metadata_request_no_dataset_name():
     """Test creating the UpdateDatasetMetadataRequest class with no dataset_name."""
@@ -105,10 +119,11 @@ def test_update_dataset_metadata_to_json():
     assert request.to_json() == {
         "dataset_name": "example_dataset",
         "metadata": {"benchmark": "benchmark_name", "accuracy": 95.5},
+        "replace_all": False,
     }
 
 
 def test_metadata_update_to_json():
     """Test the MetadataUpdate to_json method."""
     metadata_update = MetadataUpdate(accuracy=95.5)
-    assert metadata_update.to_json() == {"accuracy": 95.5}
+    assert metadata_update.to_json() == {"benchmark": None, "accuracy": 95.5}
