@@ -24,7 +24,7 @@ The `PushTracesRequest` class holds the request data for a trace upload request.
 
 The list of messages or events to be uploaded. 
 
-Must be in the [required trace format](../traces.md). Must not be empty.
+Must be in the [required trace format](../2_traces.md). Must not be empty.
 
 ##### `annotations` <span class='type'>Optional[List[List[AnnotationCreate]]</span> <span class='optional'/>
 
@@ -54,7 +54,7 @@ See [File Uploads](../Uploading_Traces/file_uploads.md) for more information on 
 
 The `AnnotationCreate` class holds the data for an annotation to be created.
 
-See [Annotations](../annotations.md) for more information on annotations.
+See [Annotations](../3_annotations.md) for more information on annotations.
 
 ##### `content` <span class='type'>str</span> <span class='required'/>
 

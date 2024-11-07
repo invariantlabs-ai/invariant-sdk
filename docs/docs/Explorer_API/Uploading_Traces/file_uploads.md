@@ -20,7 +20,7 @@ The explorer supports two types of trace formats: _raw event lists_ and _annotat
 
 #### Raw Event Lists
 
-Raw event lists are `jsonl` files where each line is a JSON array of events. Each event is a dictionary with at least a `role` and `content` field according to the trace format described [in this chapter](../traces.md).
+Raw event lists are `jsonl` files where each line is a JSON array of events. Each event is a dictionary with at least a `role` and `content` field according to the trace format described [in this chapter](../2_traces.md).
 
 ```json
 [{ "role": "user", "content": "Hello, world!" }, { "role": "assistant", "content": "Hi!" }]
@@ -36,7 +36,7 @@ To include trace-level metadata in raw event lists, include a metadata JSON obje
 
 #### Annotated Event Lists
 
-Annotated event lists support the same format as raw event lists, but also include [annotations](../annotations.md). 
+Annotated event lists support the same format as raw event lists, but also include [annotations](../3_annotations.md). 
 
 For this, each line is a JSON object with the fields `messages`, `annotations` (optional) and `metadata` (optional, for trace-level metadata).
 

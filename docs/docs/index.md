@@ -88,12 +88,12 @@ To learn more about what you can do with Explorer, check out any of the followin
     <span class='tile-description'>Submit your AI agent to the Invariant benchmark registry for comparison</span>
 </a>
 
-<a href="Explorer_API/traces.html" class='tile'>
+<a href="Explorer_API/2_traces.html" class='tile'>
     <span class='tile-title'>Trace Format →</span>
     <span class='tile-description'>Learn about the Invariant trace format and how to structure your traces for ingestion</span>
 </a>
 
-<a href="Explorer_API/client_setup.html" class='tile'>
+<a href="Explorer_API/1_client_setup.html" class='tile'>
     <span class='tile-title'>Client Setup →</span>
     <span class='tile-description'>Setting up endpoints and authentication for the Invariant SDK</span>
 </a>
