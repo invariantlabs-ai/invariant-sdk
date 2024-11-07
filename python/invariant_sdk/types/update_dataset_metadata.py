@@ -30,13 +30,14 @@ class MetadataUpdate(BaseModel):
 
     def to_json(self) -> Dict:
         """Convert the instance to a JSON-serializable dictionary."""
-        return {k: v for k, v in self.model_dump().items() if v is not None}
+        return self.model_dump()
 
 
 class UpdateDatasetMetadataRequest(BaseModel):
     """Model for the UpdateDatasetMetadata API request."""
 
     dataset_name: str
+    replace_all: Optional[bool] = False
     metadata: MetadataUpdate
 
     # Enable strict type checking.
