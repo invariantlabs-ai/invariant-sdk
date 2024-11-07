@@ -55,14 +55,6 @@ class UpdateDatasetMetadataRequest(BaseModel):
             raise ValueError("Dataset name must be a non-empty string.")
         return value
 
-    @field_validator("metadata")
-    @staticmethod
-    def validate_metadata(value: MetadataUpdate) -> MetadataUpdate:
-        """Ensure at least one field is provided in metadata."""
-        if value.accuracy is None and value.benchmark is None and value.name is None:
-            raise ValueError("At least one field must be provided for MetadataUpdate.")
-        return value
-
     def to_json(self) -> Dict:
         """Convert the instance to a JSON-serializable dictionary."""
         return self.model_dump()

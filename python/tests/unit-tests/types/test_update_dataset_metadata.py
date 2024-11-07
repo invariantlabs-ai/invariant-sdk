@@ -44,16 +44,6 @@ def test_update_dataset_metadata_request_no_accuracy():
     assert request.replace_all is False
 
 
-def test_update_dataset_metadata_request_no_fields():
-    """Test creating the UpdateDatasetMetadataRequest class with no fields."""
-    with pytest.raises(
-        ValueError, match="At least one field must be provided for MetadataUpdate"
-    ):
-        UpdateDatasetMetadataRequest(
-            dataset_name="example_dataset", metadata=MetadataUpdate()
-        )
-
-
 def test_update_dataset_metadata_request_invalid_dataset_name():
     """Test creating the UpdateDatasetMetadataRequest class with an invalid dataset_name."""
     with pytest.raises(ValueError, match="Input should be a valid string"):
