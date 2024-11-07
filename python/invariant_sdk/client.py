@@ -301,9 +301,8 @@ class Client:
     def create_request_and_update_dataset_metadata(
         self,
         dataset_name: str,
-        replace_all: Optional[bool] = False,
-        benchmark: Optional[str] = None,
-        accuracy: Optional[Union[float, int]] = None,
+        replace_all: bool = False,
+        metadata: Optional[Dict] = None,
         request_kwargs: Optional[Mapping] = None,
     ) -> Dict:
         """
@@ -311,8 +310,8 @@ class Client:
 
         Args:
             dataset_name (str): The name of the dataset to update metadata for.
-            benchmark (str): The benchmark name to update.
-            accuracy (Union[float, int]): The accuracy to update.
+            metadata (Dict): The metadata to update. The keys should be the metadata fields. 
+                             Allowed fields are "benchmark", "accuracy", and "name".
             request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
                                                 the requests method.
 
@@ -321,9 +320,10 @@ class Client:
         """
         if request_kwargs is None:
             request_kwargs = {}
+        metadata = metadata or {}
         request = UpdateDatasetMetadataRequest(
             dataset_name=dataset_name,
             replace_all=replace_all,
-            metadata=MetadataUpdate(benchmark=benchmark, accuracy=accuracy),
+            metadata=MetadataUpdate(**metadata),
         )
         return self.update_dataset_metadata(request, request_kwargs)

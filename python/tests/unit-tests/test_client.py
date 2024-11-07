@@ -552,7 +552,7 @@ def test_create_request_and_update_dataset_metadata(
 
     metadata = client.create_request_and_update_dataset_metadata(
         dataset_name="example_dataset",
-        benchmark="some_benchmark",
+        metadata={"benchmark": "some_benchmark"},
     )
 
     assert metadata.get("created_on") == "2024-11-06 13:40:52"
