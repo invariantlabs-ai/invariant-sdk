@@ -5,7 +5,7 @@ hide:
 
 # Push API
 
-<div class='subtitle'>Upload your agent traces to your Explorer account</div>
+<div class='subtitle'>Upload your agent traces via the Push API</div>
 
 The Push API allows you to upload your agent traces to your Explorer account in a programmatic way.
 

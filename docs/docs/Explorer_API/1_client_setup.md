@@ -1,7 +1,6 @@
 # Client Setup
 
 The SDK exposes a `Client` class. To create an object of this type, you need two variables: the Invariant API endpoint URL and the API key.
-The Invariant API endpoint URL is `https://explorer.invariantlabs.ai`.
 
 ## Getting the API Key
 Navigate to the <img class='inline-invariant' src="../assets/logo.svg"/> [Invariant Explorer](https://explorer.invariantlabs.ai) and create an account via GitHub Sign-In.
@@ -30,9 +29,11 @@ from invariant_sdk.client import Client
 client = Client()
 ```
 
-## Creating a Client to Override Environment Variables
+Without parameters, the `Client` object will automatically use the environment variables you set up earlier and the default Explorer instance at `https://explorer.invariantlabs.ai`.
 
-If you want to override the environment configuration or use a different API key, you can also pass the API endpoint URL and API key as arguments to the `Client` constructor.
+## Overriding Environment Configuration
+
+If you want to override the environment configuration or use a different API key, you can also pass the API endpoint URL and API key as arguments to the `Client` constructor directly.
 
 ```python
 from invariant_sdk.client import Client
