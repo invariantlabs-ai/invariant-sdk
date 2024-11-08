@@ -16,7 +16,7 @@ You can include the Invariant SDK in your `requirements.txt` file by adding `inv
 To include the Invariant SDK in your `pyproject.toml` file, follow these steps:
 
 ### Using `poetry`
-1. Add the following line under the `[tool.poetry.dependencies]` section in `pyproject.toml` by adding `invariant-sdk`.
+1. Add `invariant-sdk` under the `[tool.poetry.dependencies]` section in `pyproject.toml`.
 
 2. Run the following command to install the dependencies:
 ```
@@ -24,7 +24,7 @@ poetry install
 ```
 
 ### Using `hatch`
-1. Add the following line under the `dependencies` section in `pyproject.toml` by adding `invariant-sdk`.
+1. Add `invariant-sdk` under the `dependencies` section in `pyproject.toml`.
 
 2. Run the following command to install the dependencies:
 ```bash
