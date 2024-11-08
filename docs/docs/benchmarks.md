@@ -38,14 +38,15 @@ Once you have prepared and ensured that your agent traces are in a compatible fo
 
 ### Step 3: Associate Your Agent Dataset with a Benchmark and Score
 
-WIP: Instructions on updating the datasets's metadata to include the `benchmark` and `accuracy` fields, that will associate your agent dataset with a specific benchmark and score.
+[Instructions on updating](https://explorer.invariantlabs.ai/docs/Explorer_API/Dataset_Metadata/update_dataset_metadata_api.html) the datasets's metadata to include the `benchmark`, `name` and `accuracy` fields, that will associate your agent dataset with a specific benchmark and score.
 
-For instance, to associate your agent dataset with the `webarena` benchmark and an accuracy score of `0.5`, you can update the dataset's metadata as follows:
+For instance, to associate your `gpt-4o` agent dataset with the `webarena` benchmark and an accuracy score of `0.5`, you can update the dataset's metadata as follows:
 
 ```json
 {
     "benchmark": "webarena",
-    "accuracy": 0.5
+    "accuracy": 0.5,
+    "name": "gpt-4o"
 }
 ```
 
