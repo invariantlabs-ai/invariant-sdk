@@ -1,3 +1,12 @@
+This contains the Python SDK for interacting with the [Invariantlabs](https://invariantlabs.ai/) APIs.
+
+For more details on the operations and to get started, visit the [docs](https://explorer.invariantlabs.ai/docs/).
+
+## Install via pip
+```bash
+pip install invariant-sdk
+```
+
 ## Run tests
 1. To run tests run `pytest`.
 2. To run tests with coverage run `pytest --cov=invariant_sdk`.
