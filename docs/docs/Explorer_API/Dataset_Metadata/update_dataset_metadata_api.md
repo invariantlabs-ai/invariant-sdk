@@ -25,8 +25,9 @@ The accuracy score. Must not be negative.
 
 ##### `name` <span class='type'>Optional[str]</span> <span class='optional'/>
 
-The name attribute associated with your dataset. Must not be an empty string or a string containing only whitespace.
+The name of the agent that achieved this accuracy score on the given benchmark. Must not be an empty string or a string containing only whitespace.
 
+If `benchmark=web-arena, accuracy=0.95, name=gpt-4o`: this means that for the gpt-4o agent on the web-arena benchmark we achieved 95% accuracy.
 
 ### `UpdateDatasetMetadataRequest`
 
