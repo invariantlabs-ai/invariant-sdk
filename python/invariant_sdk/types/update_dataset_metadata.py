@@ -1,7 +1,17 @@
 """Model classes for the UpdateDatasetMetadata API."""
 
 from typing import Dict, Optional, Union
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, Field
+
+
+class InvariantTestResults(BaseModel):
+    """Model for invariant test results."""
+
+    num_tests: Optional[int] = None
+    num_passed: Optional[int] = None
+
+    # Enable strict type checking.
+    model_config = ConfigDict(strict=True)
 
 
 class MetadataUpdate(BaseModel):
@@ -10,9 +20,12 @@ class MetadataUpdate(BaseModel):
     benchmark: Optional[str] = None
     accuracy: Optional[Union[float, int]] = None
     name: Optional[str] = None
+    invariant_test_results: Optional[InvariantTestResults] = Field(
+        default=None, alias="invariant.test_results"
+    )
 
     # Enable strict type checking.
-    model_config = ConfigDict(strict=True)
+    model_config = ConfigDict(strict=True, populate_by_name=True)
 
     @field_validator("accuracy")
     @staticmethod
@@ -32,9 +45,21 @@ class MetadataUpdate(BaseModel):
             raise ValueError(f"{field.field_name} must be a non-empty string.")
         return value
 
+    @field_validator("invariant_test_results")
+    @staticmethod
+    def validate_invariant_test_results(
+        value: Optional[InvariantTestResults],
+    ) -> Optional[InvariantTestResults]:
+        """Ensure invariant_test_results is a valid InvariantTestResults instance, if provided."""
+        if value is not None and all(v is None for v in value.model_dump().values()):
+            raise ValueError("invariant_test_results must be non-empty if specified.")
+        return value
+
     def to_json(self) -> Dict:
         """Convert the instance to a JSON-serializable dictionary."""
-        return {k: v for k, v in self.model_dump().items() if v is not None}
+        return {
+            k: v for k, v in self.model_dump(by_alias=True).items() if v is not None
+        }
 
 
 class UpdateDatasetMetadataRequest(BaseModel):
@@ -45,7 +70,7 @@ class UpdateDatasetMetadataRequest(BaseModel):
     metadata: MetadataUpdate
 
     # Enable strict type checking.
-    model_config = ConfigDict(strict=True)
+    model_config = ConfigDict(strict=True, populate_by_name=True)
 
     @field_validator("dataset_name")
     @staticmethod
@@ -57,4 +82,6 @@ class UpdateDatasetMetadataRequest(BaseModel):
 
     def to_json(self) -> Dict:
         """Convert the instance to a JSON-serializable dictionary."""
-        return self.model_dump()
+        return {
+            k: v for k, v in self.model_dump(by_alias=True).items() if v is not None
+        }
