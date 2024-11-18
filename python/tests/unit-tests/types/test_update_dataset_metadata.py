@@ -154,7 +154,12 @@ def test_update_dataset_metadata_to_json():
     )
     assert request.to_json() == {
         "dataset_name": "example_dataset",
-        "metadata": {"benchmark": "benchmark_name", "accuracy": 95.5, "name": "name"},
+        "metadata": {
+            "benchmark": "benchmark_name",
+            "accuracy": 95.5,
+            "name": "name",
+            "invariant.test_results": None,
+        },
         "replace_all": False,
     }
 
