@@ -11,6 +11,18 @@ The UpdateDatasetMetadata API allows you to update the metadata for a dataset in
 
 ## Data Types
 
+### `InvariantTestResults`
+
+The `InvariantTestResults` class holds the metadata attributes for test runs. Only the following fields can be updated:
+
+##### `num_tests` <span class='type'>Optional[int]</span> <span class='optional'/>
+
+The total number of tests.
+
+##### `num_passed` <span class='type'>Optional[int]</span> <span class='optional'/>
+
+The number of tests that passed.
+
 ### `MetadataUpdate`
 
 The `MetadataUpdate` class holds the metadata attributes which you want to update. Only the following fields can be updated:
@@ -27,7 +39,15 @@ The accuracy score. Must not be negative.
 
 The name of the agent that achieved this accuracy score on the given benchmark. Must not be an empty string or a string containing only whitespace.
 
-If `benchmark=web-arena, accuracy=0.95, name=gpt-4o`: this means that for the gpt-4o agent on the web-arena benchmark we achieved 95% accuracy.
+##### `invariant_test_results` <span class='type'>Optional[InvariantTestResults]</span> <span class='optional'/>
+
+This is used to store the test results for datasets which represent test runs. An alias for this field is: `invariant.test_results`.
+
+Examples:
+
+`benchmark=web-arena, accuracy=0.95, name=gpt-4o`:  means that for the gpt-4o agent on the web-arena benchmark we achieved 95% accuracy.
+
+`invariant.test_results: {"num_tests": 10, "num_passed": 9}`: means that the dataset represents a test result where there are a total of 10 tests and out of them 9 passed.
 
 ### `UpdateDatasetMetadataRequest`
 
