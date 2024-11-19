@@ -91,6 +91,7 @@ class PushTracesResponse(BaseModel):
 
     id: List[str]
     dataset: Optional[str] = None
+    username: Optional[str] = None
 
     @classmethod
     def from_json(cls, json_obj: Dict) -> "PushTracesResponse":

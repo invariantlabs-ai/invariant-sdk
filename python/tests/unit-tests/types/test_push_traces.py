@@ -204,10 +204,11 @@ def test_response_from_json():
 
 def test_response_from_json_missing_dataset():
     """Test creating PushTracesResponse from a JSON object without dataset."""
-    json_obj = {"id": ["123", "456"]}
+    json_obj = {"id": ["123", "456"], "username": "example_username"}
     response = PushTracesResponse.from_json(json_obj)
 
     assert response.id == ["123", "456"] and response.dataset is None
+    assert response.username == "example_username"
 
 
 def test_response_from_json_empty_id():
