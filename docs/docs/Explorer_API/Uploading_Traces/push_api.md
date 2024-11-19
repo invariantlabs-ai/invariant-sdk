@@ -82,6 +82,10 @@ The list of IDs for the created traces.
 
 The dataset name. Default is `None`.
 
+##### `username` <span class='type'>str</span> <span class='required'/>
+
+The username using which the trace was pushed.
+
 
 ## Pushing Traces
 
