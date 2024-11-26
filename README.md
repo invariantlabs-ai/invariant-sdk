@@ -4,6 +4,9 @@ This repository contains the Python SDK for interacting with the [Invariantlabs]
 
 This documentation will guide you through the process of setting up the SDK, capturing traces, and uploading them to the Invariant Explorer. The SDK currently only supports Python.
 
+## Documentation
+Visit [this](https://explorer.invariantlabs.ai/docs/) to see how to use the SDK.
+
 ## Install via pip directly
 ```bash
 pip install invariant-sdk
