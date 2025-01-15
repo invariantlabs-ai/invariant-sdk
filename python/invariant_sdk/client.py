@@ -234,6 +234,7 @@ class Client:
     def get_dataset_metadata(
         self,
         dataset_name: str,
+        owner_username: str = None,
         request_kwargs: Optional[Mapping] = None,
     ) -> Dict:
         """
@@ -241,6 +242,11 @@ class Client:
 
         Args:
             dataset_name (str): The name of the dataset to get metadata for.
+            owner_username (str): The username of the owner of the dataset. If the caller
+                                  is not the owner, this parameter should be set to the
+                                  owner's username. If the dataset is not owner by the caller,
+                                  this method will return the metadata iff the dataset
+                                  is public.
             request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
                                       the requests method.
 
@@ -249,9 +255,12 @@ class Client:
         """
         if request_kwargs is None:
             request_kwargs = {}
+        pathname = f"{DATASET_METADATA_API_PATH}/{dataset_name}"
+        if owner_username:
+            pathname += f"?owner_username={owner_username}"
         http_response = self.request(
             method="GET",
-            pathname=f"{DATASET_METADATA_API_PATH}/{dataset_name}",
+            pathname=pathname,
             request_kwargs={
                 **request_kwargs,
                 "headers": {
