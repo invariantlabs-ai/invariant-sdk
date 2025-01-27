@@ -15,6 +15,7 @@ def test_valid_input():
     assert request.messages == messages
     assert request.trace_id == trace_id
     assert request.to_json() == {"messages": messages, "trace_id": trace_id}
+    assert all("timestamp" in msg for msg in request.messages)
 
 
 def test_empty_messages():
@@ -30,7 +31,7 @@ def test_messages_not_a_list():
     with pytest.raises(ValidationError) as exc_info:
         AppendMessagesRequest(messages="not-a-list", trace_id="valid-trace-id")
 
-    assert "should be a valid list" in str(exc_info.value)
+    assert "messages must be a list of non-empty dictionaries" in str(exc_info.value)
 
 
 def test_messages_contains_non_dicts():
@@ -40,7 +41,7 @@ def test_messages_contains_non_dicts():
             messages=[{"key": "value"}, "not-a-dict"], trace_id="valid-trace-id"
         )
 
-    assert "should be a valid dictionary" in str(exc_info.value)
+    assert "messages must be a list of non-empty dictionaries" in str(exc_info.value)
 
 
 def test_messages_contains_empty_dict():

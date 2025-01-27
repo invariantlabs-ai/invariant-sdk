@@ -11,7 +11,11 @@ from invariant_sdk.types.exceptions import (
     InvariantNotFoundError,
 )
 from invariant_sdk.types.push_traces import PushTracesRequest, PushTracesResponse
-from invariant_sdk.types.update_dataset_metadata import MetadataUpdate, UpdateDatasetMetadataRequest
+from invariant_sdk.types.update_dataset_metadata import (
+    MetadataUpdate,
+    UpdateDatasetMetadataRequest,
+)
+from invariant_sdk.types.append_messages import AppendMessagesRequest
 
 import requests
 import invariant_sdk.utils as invariant_utils
@@ -21,6 +25,7 @@ DEFAULT_CONNECTION_TIMEOUT_MS = 5_000
 DEFAULT_READ_TIMEOUT_MS = 20_000
 PUSH_TRACE_API_PATH = "/api/v1/push/trace"
 DATASET_METADATA_API_PATH = "/api/v1/dataset/metadata"
+TRACE_API_PATH = "/api/v1/trace"
 
 
 def _close_session(session: requests.Session) -> None:
@@ -300,9 +305,9 @@ class Client:
                     **request_kwargs.get("headers", {}),
                 },
                 "json": {
-                  "metadata": request.metadata.to_json(),
-                  "replace_all": request.replace_all,
-                }
+                    "metadata": request.metadata.to_json(),
+                    "replace_all": request.replace_all,
+                },
             },
         )
         return http_response.json()
@@ -319,7 +324,7 @@ class Client:
 
         Args:
             dataset_name (str): The name of the dataset to update metadata for.
-            metadata (Dict): The metadata to update. The keys should be the metadata fields. 
+            metadata (Dict): The metadata to update. The keys should be the metadata fields.
                              Allowed fields are "benchmark", "accuracy", and "name".
             request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
                                                 the requests method.
@@ -336,3 +341,64 @@ class Client:
             metadata=MetadataUpdate(**metadata),
         )
         return self.update_dataset_metadata(request, request_kwargs)
+
+    def append_messages(
+        self,
+        request: AppendMessagesRequest,
+        request_kwargs: Optional[Mapping] = None,
+    ) -> Dict:
+        """
+        Append messages to an existing trace.
+
+        Args:
+            request (AppendMessagesRequest): The request object containing the trace_id
+                                             and messages to append.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
+                                                the requests method.
+
+        Returns:
+            Dict: The response from the API.
+        """
+        if request_kwargs is None:
+            request_kwargs = {}
+        http_response = self.request(
+            method="POST",
+            pathname=f"{TRACE_API_PATH}/{request.trace_id}/messages",
+            request_kwargs={
+                **request_kwargs,
+                "headers": {
+                    "Content-Type": "application/json",
+                    **request_kwargs.get("headers", {}),
+                },
+                "json": {
+                    "messages": request.dump_messages()["messages"],
+                },
+            },
+        )
+        return http_response.json()
+
+    def create_request_and_append_messages(
+        self,
+        messages: List[Dict],
+        trace_id: str,
+        request_kwargs: Optional[Mapping] = None,
+    ) -> Dict:
+        """
+        Append messages to an existing trace.
+
+        Args:
+            messages (List[Dict]): The messages to append to the trace.
+            trace_id (str): The ID of the trace to append messages to.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
+                                                the requests method.
+
+        Returns:
+            Dict: The response from the API.
+        """
+        if request_kwargs is None:
+            request_kwargs = {}
+        request = AppendMessagesRequest(
+            messages=messages,
+            trace_id=trace_id,
+        )
+        return self.append_messages(request, request_kwargs)

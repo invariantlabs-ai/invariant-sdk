@@ -1,6 +1,8 @@
 """Model class for the AppendMessages API."""
 
 from typing import Any, List, Dict
+from datetime import datetime, timezone
+
 from pydantic import BaseModel, ConfigDict, field_validator
 
 
@@ -13,14 +15,19 @@ class AppendMessagesRequest(BaseModel):
     # Enable strict type checking.
     model_config = ConfigDict(strict=True)
 
-    @field_validator("messages")
+    @field_validator("messages", mode="before")
     @classmethod
-    def validate_messages(cls, messages: List[Dict]) -> List[Dict]:
-        """Validate the messages."""
+    def validate_and_add_timestamps(cls, messages: List[Dict]) -> List[Dict]:
+        """Validate messages and add a timestamp to each."""
         if not messages:
             raise ValueError("messages cannot be empty")
-        if not all(msg for msg in messages):
+        if not all(isinstance(msg, dict) and msg for msg in messages):
             raise ValueError("messages must be a list of non-empty dictionaries")
+
+        # Add default timestamp to each message
+        current_time = datetime.now(timezone.utc).isoformat()
+        for msg in messages:
+            msg.setdefault("timestamp", current_time)
         return messages
 
     @field_validator("trace_id")
@@ -40,3 +47,15 @@ class AppendMessagesRequest(BaseModel):
                             AppendMessagesRequest instance.
         """
         return self.model_dump()
+
+    def dump_messages(self) -> Dict[str, Any]:
+        """
+        Return the messages as a JSON-serializable dictionary.
+
+        Returns:
+            Dict[str, Any]: A JSON-serializable dictionary representing the
+                            messages.
+        """
+        dump = self.model_dump()
+        del dump["trace_id"]
+        return dump

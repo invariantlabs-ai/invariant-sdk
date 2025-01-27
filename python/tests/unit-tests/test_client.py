@@ -1,5 +1,6 @@
 """Unit tests for the Client class."""
 
+from datetime import datetime, timezone
 from unittest import mock
 
 import pytest
@@ -11,6 +12,7 @@ from invariant_sdk.types.update_dataset_metadata import (
     UpdateDatasetMetadataRequest,
     MetadataUpdate,
 )
+from invariant_sdk.types.append_messages import AppendMessagesRequest
 from invariant_sdk.types.exceptions import (
     InvariantAPITimeoutError,
     InvariantNotFoundError,
@@ -436,7 +438,7 @@ def test_get_dataset_metadata(mock_session_cls: mock.Mock, set_env_vars):  # pyl
 
 @mock.patch("invariant_sdk.client.requests.Session")
 def test_update_dataset_metadata(mock_session_cls: mock.Mock, set_env_vars):  # pylint: disable=unused-argument
-    """Test the create_request_and_update_dataset_metadata method with default headers passed."""
+    """Test the update_dataset_metadata method with default headers passed."""
     mock_response = mock.Mock()
     mock_response.json.return_value = {
         "created_on": "2024-11-06 13:40:52",
@@ -455,7 +457,6 @@ def test_update_dataset_metadata(mock_session_cls: mock.Mock, set_env_vars):  # 
         metadata=MetadataUpdate(benchmark="new_benchmark_name", accuracy=99.5),
     )
 
-    # Pass headers in request_kwargs to test that it is passed through to the API.
     metadata = client.update_dataset_metadata(update_metadata_request)
     assert metadata.get("created_on") == "2024-11-06 13:40:52"
     assert metadata.get("benchmark") == "new_benchmark_name"
@@ -573,4 +574,124 @@ def test_create_request_and_update_dataset_metadata(
             "Content-Type": "application/json",
         },
         stream=False,
+    )
+
+
+@mock.patch("invariant_sdk.client.requests.Session")
+@mock.patch("invariant_sdk.types.append_messages.datetime")
+def test_append_messages(
+    mock_datetime: mock.Mock, mock_session_cls: mock.Mock, set_env_vars
+):  # pylint: disable=unused-argument
+    """Test the append_messages method with default headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "success": True,
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    # Mock datetime to return a specific value for `now()`
+    mock_datetime.now.return_value = datetime(2025, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "success": True,
+    }
+
+    client = Client(timeout_ms=(3000, 7000))
+
+    update_metadata_request = AppendMessagesRequest(
+        messages=[
+            {"role": "user", "content": "one"},
+            {"role": "assistant", "content": "two \n three"},
+        ],
+        trace_id="123",
+    )
+
+    result = client.append_messages(update_metadata_request)
+    assert result.get("success")
+
+    # Assert that the request method was called once with the expected arguments.
+    mock_session.request.assert_called_once_with(
+        method="POST",
+        url="https://default.api.url/api/v1/trace/123/messages",
+        stream=False,
+        timeout=(3.0, 7.0),
+        headers={
+            "Authorization": "Bearer test-key",  # Default API key from env.
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        json={
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "one",
+                    "timestamp": "2025-01-01T12:00:00+00:00",
+                },
+                {
+                    "role": "assistant",
+                    "content": "two \n three",
+                    "timestamp": "2025-01-01T12:00:00+00:00",
+                },
+            ],
+        },
+    )
+
+
+@mock.patch("invariant_sdk.client.requests.Session")
+@mock.patch("invariant_sdk.types.append_messages.datetime")
+def test_create_request_and_append_messages(
+    mock_datetime: mock.Mock, mock_session_cls: mock.Mock, set_env_vars
+):  # pylint: disable=unused-argument
+    """Test the create_request_and_update_dataset_metadata method with default headers passed."""
+    mock_response = mock.Mock()
+    mock_response.json.return_value = {
+        "success": True,
+    }
+    mock_session = mock.Mock()
+    mock_session.request.return_value = mock_response
+    mock_session_cls.return_value = mock_session
+
+    # Mock datetime to return a specific value for `now()`
+    mock_datetime.now.return_value = datetime(2025, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+
+    client = Client(timeout_ms=(3000, 7000))
+
+    result = client.create_request_and_append_messages(
+        messages=[
+            {"role": "user", "content": "one"},
+            {"role": "assistant", "content": "two \n three"},
+        ],
+        trace_id="123",
+    )
+
+    assert result.get("success")
+
+    # Assert that the request method was called once with the expected arguments.
+    mock_session.request.assert_called_once_with(
+        method="POST",
+        url="https://default.api.url/api/v1/trace/123/messages",
+        stream=False,
+        timeout=(3.0, 7.0),
+        headers={
+            "Authorization": "Bearer test-key",  # Default API key from env.
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        json={
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "one",
+                    "timestamp": "2025-01-01T12:00:00+00:00",
+                },
+                {
+                    "role": "assistant",
+                    "content": "two \n three",
+                    "timestamp": "2025-01-01T12:00:00+00:00",
+                },
+            ],
+        },
     )

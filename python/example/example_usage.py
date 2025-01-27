@@ -4,7 +4,7 @@ from invariant_sdk.client import Client
 
 if __name__ == "__main__":
     client = Client(
-        api_url="http://localhost:8000",
+        api_url="http://127.0.0.1",
         # Add the API key here.
         api_key="",
     )
