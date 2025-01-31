@@ -19,6 +19,7 @@ from invariant_sdk.types.append_messages import AppendMessagesRequest
 
 import requests
 import invariant_sdk.utils as invariant_utils
+import urllib3
 
 
 DEFAULT_CONNECTION_TIMEOUT_MS = 5_000
@@ -109,21 +110,20 @@ class Client:
         self,
         method: Literal["GET", "POST", "PUT", "DELETE"],
         pathname: str,
-        request_kwargs: Optional[Mapping],
+        request_kwargs: Optional[Mapping] = None,
     ) -> requests.Response:
         """
         Makes a request to the Invariant API.
 
         Args:
-            method (Literal["GET", "POST", "PUT", "DELETE"]): The HTTP method to use
-                                                              for the request.
+            method (Literal["GET", "POST", "PUT", "DELETE"]): The HTTP method to use.
             pathname (str): The path to make the request to.
-            request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
-                                      the requests method.
+            request_kwargs (Optional[Mapping]): Additional keyword arguments for the request.
 
         Returns:
             requests.Response: The response from the API.
         """
+        request_kwargs = request_kwargs or {}
         request_kwargs = {
             "timeout": (self.timeout_ms[0] / 1000, self.timeout_ms[1] / 1000),
             **request_kwargs,
@@ -144,31 +144,48 @@ class Client:
             return response
         except requests.ReadTimeout as e:
             raise InvariantAPITimeoutError(
-                f"Timeout when calling method: {method} for path: {pathname}."
+                f"Timeout when calling method: {method} for path: {pathname}. Server took too long."
             ) from e
-        except (requests.ConnectionError, requests.ConnectTimeout) as e:
+        except requests.ConnectTimeout as e:
+            raise InvariantAPITimeoutError(
+                f"Timeout when connecting to server for method: {method} on path: {pathname}."
+            ) from e
+        except requests.ConnectionError as e:
+            cause = getattr(e, "__cause__", None)
+            if isinstance(cause, TimeoutError):
+                raise InvariantAPITimeoutError(
+                    f"Timeout when calling method: {method} for path: {pathname}."
+                ) from e
+            if isinstance(cause, urllib3.exceptions.ProtocolError):
+                inner_cause = getattr(cause, "__cause__", None)
+                if isinstance(inner_cause, TimeoutError):
+                    raise InvariantAPITimeoutError(
+                        f"Timeout when calling method: {method} for path: {pathname}."
+                    ) from e
             raise InvariantError(
                 f"Connection error when calling method: {method} for path: {pathname}."
             ) from e
         except requests.HTTPError as e:
-            if response.status_code == 500:
-                raise InvariantAPIError(
-                    f"Server error caused failure when calling method: {method} for path: {pathname}."
-                ) from e
-            if response.status_code == 401:
-                raise InvariantAuthError(
-                    f"Authentication failed when calling method: {method} for path: {pathname}."
-                ) from e
-            if response.status_code == 404:
-                raise InvariantNotFoundError(
-                    f"Resource not found when calling method: {method} for path: {pathname}."
-                ) from e
+            response = e.response
+            if response is not None:
+                if response.status_code == 500:
+                    raise InvariantAPIError(
+                        f"Server error (500) when calling method: {method} for path: {pathname}."
+                    ) from e
+                if response.status_code == 401:
+                    raise InvariantAuthError(
+                        f"Authentication failed (401) when calling method: {method} for path: {pathname}."
+                    ) from e
+                if response.status_code == 404:
+                    raise InvariantNotFoundError(
+                        f"Resource not found (404) when calling method: {method} for path: {pathname}."
+                    ) from e
             raise InvariantError(
-                f"Error calling method: {method} for path: {pathname}."
+                f"HTTP error when calling method: {method} for path: {pathname}."
             ) from e
         except Exception as e:
             raise InvariantError(
-                f"Error calling method: {method} for path: {pathname}."
+                f"Unexpected error ({type(e).__name__}): {e} when calling method: {method} for path: {pathname}."
             ) from e
 
     def push_trace(

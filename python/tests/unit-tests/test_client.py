@@ -252,7 +252,7 @@ def test_push_trace_timeout(
         client.push_trace(push_traces_request)
     assert (
         str(exc_info.value)
-        == "Timeout when calling method: POST for path: /api/v1/push/trace."
+        == "Timeout when calling method: POST for path: /api/v1/push/trace. Server took too long."
     )
 
 
@@ -290,7 +290,7 @@ def test_push_trace_connect_timeout_error(
         client.push_trace(push_traces_request)
     assert (
         str(exc_info.value)
-        == "Connection error when calling method: POST for path: /api/v1/push/trace."
+        == "Timeout when connecting to server for method: POST on path: /api/v1/push/trace."
     )
 
 
@@ -300,8 +300,10 @@ def test_push_trace_auth_error(
 ):  # pylint: disable=unused-argument
     """Test that an authentication error raises InvariantAuthError."""
     mock_response = mock.Mock()
-    mock_response.raise_for_status.side_effect = requests.HTTPError
     mock_response.status_code = 401
+    http_error = requests.HTTPError(response=mock_response)
+    mock_response.raise_for_status.side_effect = http_error
+
     mock_session = mock.Mock()
     mock_session.request.return_value = mock_response
     mock_session_cls.return_value = mock_session
@@ -312,7 +314,7 @@ def test_push_trace_auth_error(
         client.push_trace(push_traces_request)
     assert (
         str(exc_info.value)
-        == "Authentication failed when calling method: POST for path: /api/v1/push/trace."
+        == "Authentication failed (401) when calling method: POST for path: /api/v1/push/trace."
     )
 
 
@@ -322,8 +324,10 @@ def test_push_trace_not_found_error(
 ):  # pylint: disable=unused-argument
     """Test that a not found error raises InvariantNotFoundError."""
     mock_response = mock.Mock()
-    mock_response.raise_for_status.side_effect = requests.HTTPError
     mock_response.status_code = 404
+    http_error = requests.HTTPError(response=mock_response)
+    mock_response.raise_for_status.side_effect = http_error
+
     mock_session = mock.Mock()
     mock_session.request.return_value = mock_response
     mock_session_cls.return_value = mock_session
@@ -334,7 +338,7 @@ def test_push_trace_not_found_error(
         client.push_trace(push_traces_request)
     assert (
         str(exc_info.value)
-        == "Resource not found when calling method: POST for path: /api/v1/push/trace."
+        == "Resource not found (404) when calling method: POST for path: /api/v1/push/trace."
     )
 
 
@@ -344,8 +348,10 @@ def test_push_trace_too_many_requests_error(
 ):  # pylint: disable=unused-argument
     """Test that a too many requests error raises InvariantError."""
     mock_response = mock.Mock()
-    mock_response.raise_for_status.side_effect = requests.HTTPError
     mock_response.status_code = 429
+    http_error = requests.HTTPError(response=mock_response)
+    mock_response.raise_for_status.side_effect = http_error
+
     mock_session = mock.Mock()
     mock_session.request.return_value = mock_response
     mock_session_cls.return_value = mock_session
@@ -356,7 +362,7 @@ def test_push_trace_too_many_requests_error(
         client.push_trace(push_traces_request)
     assert (
         str(exc_info.value)
-        == "Error calling method: POST for path: /api/v1/push/trace."
+        == "HTTP error when calling method: POST for path: /api/v1/push/trace."
     )
 
 
@@ -366,8 +372,10 @@ def test_push_trace_server_side_error(
 ):  # pylint: disable=unused-argument
     """Test that a server side error raises InvariantAPIError."""
     mock_response = mock.Mock()
-    mock_response.raise_for_status.side_effect = requests.HTTPError
     mock_response.status_code = 500
+    http_error = requests.HTTPError(response=mock_response)
+    mock_response.raise_for_status.side_effect = http_error
+
     mock_session = mock.Mock()
     mock_session.request.return_value = mock_response
     mock_session_cls.return_value = mock_session
@@ -378,7 +386,7 @@ def test_push_trace_server_side_error(
         client.push_trace(push_traces_request)
     assert (
         str(exc_info.value)
-        == "Server error caused failure when calling method: POST for path: /api/v1/push/trace."
+        == "Server error (500) when calling method: POST for path: /api/v1/push/trace."
     )
 
 
@@ -397,7 +405,7 @@ def test_push_trace_generic_exception(
         client.push_trace(push_traces_request)
     assert (
         str(exc_info.value)
-        == "Error calling method: POST for path: /api/v1/push/trace."
+        == "Unexpected error (Exception): Generic error when calling method: POST for path: /api/v1/push/trace."
     )
 
 
