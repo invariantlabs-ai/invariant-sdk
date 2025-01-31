@@ -1,5 +1,7 @@
 """Model class for the AppendMessages API."""
 
+import copy
+
 from typing import Any, List, Dict
 from datetime import datetime, timezone
 
@@ -24,11 +26,14 @@ class AppendMessagesRequest(BaseModel):
         if not all(isinstance(msg, dict) and msg for msg in messages):
             raise ValueError("messages must be a list of non-empty dictionaries")
 
+        # Deep copy to ensure original data is not modified
+        messages_copy = copy.deepcopy(messages)
+
         # Add default timestamp to each message
         current_time = datetime.now(timezone.utc).isoformat()
-        for msg in messages:
+        for msg in messages_copy:
             msg.setdefault("timestamp", current_time)
-        return messages
+        return messages_copy
 
     @field_validator("trace_id")
     @classmethod

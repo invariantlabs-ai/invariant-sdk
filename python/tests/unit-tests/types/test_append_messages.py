@@ -11,11 +11,14 @@ def test_valid_input():
     trace_id = "valid-trace-id"
 
     request = AppendMessagesRequest(messages=messages, trace_id=trace_id)
-
-    assert request.messages == messages
+    request_messages_without_timestamps = [
+        {k: v for k, v in msg.items() if k != "timestamp"} for msg in request.messages
+    ]
+    assert request_messages_without_timestamps == messages
     assert request.trace_id == trace_id
-    assert request.to_json() == {"messages": messages, "trace_id": trace_id}
     assert all("timestamp" in msg for msg in request.messages)
+    # Assert that the original messages list is not modified
+    assert all("timestamp" not in msg for msg in messages)
 
 
 def test_empty_messages():
