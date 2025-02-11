@@ -1,6 +1,7 @@
 """Async client for interacting with the Invariant APIs."""
 
 from typing import Dict, List, Literal, Mapping, Optional, Tuple, Union
+import asyncio
 import atexit
 import httpx
 
@@ -24,7 +25,11 @@ from invariant_sdk.types.update_dataset_metadata import (
 
 
 def _close_session(session: httpx.AsyncClient) -> None:
-    session.close()
+    """Ensure the async client session is properly closed at exit."""
+    try:
+        asyncio.run(session.aclose())
+    except RuntimeError:
+        pass
 
 
 class AsyncClient(BaseClient):
