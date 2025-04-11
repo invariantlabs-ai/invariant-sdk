@@ -2,16 +2,17 @@
 
 import copy
 
-from typing import Any, List, Dict
+from typing import Any, Dict, List, Optional
 from datetime import datetime, timezone
-
 from pydantic import BaseModel, ConfigDict, field_validator
+from invariant_sdk.types.annotations import AnnotationCreate
 
 
 class AppendMessagesRequest(BaseModel):
     """Model class which holds the AppendMessages API request."""
 
     messages: List[Dict]
+    annotations: Optional[List[AnnotationCreate]] = None
     trace_id: str
 
     # Enable strict type checking.
@@ -61,6 +62,16 @@ class AppendMessagesRequest(BaseModel):
             Dict[str, Any]: A JSON-serializable dictionary representing the
                             messages.
         """
-        dump = self.model_dump()
-        del dump["trace_id"]
-        return dump
+        return self.model_dump().get("messages")
+
+    def dump_annotations(self) -> Dict[str, Any]:
+        """
+        Return the annotations as a JSON-serializable dictionary.
+
+        Returns:
+            Dict[str, Any]: A JSON-serializable dictionary representing the
+                            annotations.
+        """
+        if self.annotations is None:
+            return []
+        return self.model_dump().get("annotations")

@@ -134,6 +134,7 @@ class BaseClient:
                 **request_kwargs.get("headers", {}),
             },
             "json": {
-                "messages": request.dump_messages()["messages"],
+                "messages": request.dump_messages(),
+                "annotations": request.dump_annotations(),
             },
         }

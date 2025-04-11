@@ -19,3 +19,10 @@ class AnnotationCreate(BaseModel):
         if not isinstance(data, list) or not all(isinstance(i, list) for i in data):
             raise ValueError("Input must be a List of List of Dict.")
         return [[cls(**item) for item in sublist] for sublist in data]
+
+    @classmethod
+    def from_dicts(cls, data: List[Dict[Any, Any]]) -> List["AnnotationCreate"]:
+        """Converts of List of Dict of List of AnnotationCreate."""
+        if not isinstance(data, list) or not all(isinstance(i, dict) for i in data):
+            raise ValueError("Input must be a List of Dict.")
+        return [cls(**item) for item in data]

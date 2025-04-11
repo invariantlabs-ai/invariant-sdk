@@ -275,6 +275,7 @@ class Client(BaseClient):
         self,
         messages: List[Dict],
         trace_id: str,
+        annotations: Optional[List[Dict]] = None,
         request_kwargs: Optional[Mapping] = None,
     ) -> Dict:
         """
@@ -283,6 +284,7 @@ class Client(BaseClient):
         Args:
             messages (List[Dict]): The messages to append to the trace.
             trace_id (str): The ID of the trace to append messages to.
+            annotations (Optional[List[Dict]]): The annotations corresponding to the messages.
             request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
                                                 the requests method.
 
@@ -292,5 +294,8 @@ class Client(BaseClient):
         request = AppendMessagesRequest(
             trace_id=trace_id,
             messages=messages,
+            annotations=(
+                AnnotationCreate.from_dicts(annotations) if annotations else None
+            ),
         )
         return self.append_messages(request, request_kwargs)

@@ -266,6 +266,7 @@ class AsyncClient(BaseClient):
         self,
         messages: List[Dict],
         trace_id: str,
+        annotations: Optional[List[Dict]] = None,
         request_kwargs: Optional[Mapping] = None,
     ) -> Dict:
         """
@@ -274,6 +275,7 @@ class AsyncClient(BaseClient):
         Args:
             messages (List[Dict]): The messages to append to the trace.
             trace_id (str): The ID of the trace to append messages to.
+            annotations (Optional[List[Dict]]): The annotations corresponding to the messages.
             request_kwargs (Optional[Mapping]): Additional keyword arguments to pass to
                                                 the httpx method.
 
@@ -282,6 +284,9 @@ class AsyncClient(BaseClient):
         """
         request = AppendMessagesRequest(
             trace_id=trace_id,
+            annotations=(
+                AnnotationCreate.from_dicts(annotations) if annotations else None
+            ),
             messages=messages,
         )
         return await self.append_messages(request, request_kwargs)

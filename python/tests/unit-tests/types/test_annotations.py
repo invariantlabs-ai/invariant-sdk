@@ -48,3 +48,30 @@ def test_annotation_create_from_nested_dicts_invalid_input():
         AnnotationCreate.from_nested_dicts(
             [{"content": "Content 1", "address": "Address 1"}]
         )
+
+
+def test_annotation_create_from_dicts():
+    """Test the from_dicts class method with valid input."""
+    data = [
+        {"content": "Content 1", "address": "Address 1"},
+        {
+            "content": "Content 2",
+            "address": "Address 2",
+            "extra_metadata": {"key": "value"},
+        },
+        {"content": "Content 3", "address": "Address 3"},
+    ]
+    annotations = AnnotationCreate.from_dicts(data)
+    assert len(annotations) == 3
+    assert annotations[0].content == "Content 1"
+    assert annotations[1].extra_metadata == {"key": "value"}
+
+
+def test_annotation_create_from_dicts_invalid_input():
+    """Test the from_dicts class method with invalid input."""
+    with pytest.raises(ValueError):
+        AnnotationCreate.from_dicts(
+            [[{"content": "Content 1", "address": "Address 1"}]]
+        )
+    with pytest.raises(ValueError):
+        AnnotationCreate.from_dicts({"content": "Content 1", "address": "Address 1"})

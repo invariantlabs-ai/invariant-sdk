@@ -677,8 +677,18 @@ async def test_create_request_and_update_dataset_metadata(is_async, set_env_vars
 
 
 @mock.patch("invariant_sdk.types.append_messages.datetime")
-@pytest.mark.parametrize("is_async", [True, False])
-async def test_append_messages(mock_datetime: mock.Mock, is_async, set_env_vars):  # pylint: disable=unused-argument
+@pytest.mark.parametrize(
+    "is_async,with_annotations",
+    [
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ],
+)
+async def test_append_messages(
+    mock_datetime: mock.Mock, is_async: bool, with_annotations: bool, set_env_vars
+):  # pylint: disable=unused-argument
     """Test the append_messages method with default headers passed."""
     # Mock datetime to return a specific value for `now()`
     mock_datetime.now.return_value = datetime(2025, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
@@ -692,6 +702,17 @@ async def test_append_messages(mock_datetime: mock.Mock, is_async, set_env_vars)
             {"role": "assistant", "content": "two \n three"},
         ],
         trace_id="123",
+        annotations=AnnotationCreate.from_dicts(
+            [
+                {
+                    "content": "annotating one",
+                    "address": "messages[0].content:L0",
+                    "extra_metadata": {"key1": "value1"},
+                }
+            ]
+        )
+        if with_annotations
+        else None,
     )
     if is_async:
         mock_session = mock.AsyncMock()
@@ -733,6 +754,15 @@ async def test_append_messages(mock_datetime: mock.Mock, is_async, set_env_vars)
                     "timestamp": "2025-01-01T12:00:00+00:00",
                 },
             ],
+            "annotations": [
+                {
+                    "content": "annotating one",
+                    "address": "messages[0].content:L0",
+                    "extra_metadata": {"key1": "value1"},
+                }
+            ]
+            if with_annotations
+            else [],
         },
     }
     if not is_async:  # Only add `stream=False` for sync clients (requests.Session)
@@ -741,9 +771,17 @@ async def test_append_messages(mock_datetime: mock.Mock, is_async, set_env_vars)
 
 
 @mock.patch("invariant_sdk.types.append_messages.datetime")
-@pytest.mark.parametrize("is_async", [True, False])
+@pytest.mark.parametrize(
+    "is_async,with_annotations",
+    [
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ],
+)
 async def test_create_request_and_append_messages(
-    mock_datetime: mock.Mock, is_async, set_env_vars
+    mock_datetime: mock.Mock, is_async: bool, with_annotations: bool, set_env_vars
 ):  # pylint: disable=unused-argument
     """Test the create_request_and_update_dataset_metadata method with default headers passed."""
     # Mock datetime to return a specific value for `now()`
@@ -758,6 +796,15 @@ async def test_create_request_and_append_messages(
             {"role": "assistant", "content": "two \n three"},
         ],
         "trace_id": "123",
+        "annotations": [
+            {
+                "content": "annotating one",
+                "address": "messages[0].content:L0",
+                "extra_metadata": {"key1": "value1"},
+            }
+        ]
+        if with_annotations
+        else None,
     }
 
     if is_async:
@@ -800,6 +847,15 @@ async def test_create_request_and_append_messages(
                     "timestamp": "2025-01-01T12:00:00+00:00",
                 },
             ],
+            "annotations": [
+                {
+                    "content": "annotating one",
+                    "address": "messages[0].content:L0",
+                    "extra_metadata": {"key1": "value1"},
+                }
+            ]
+            if with_annotations
+            else [],
         },
     }
     if not is_async:  # Only add `stream=False` for sync clients (requests.Session)
