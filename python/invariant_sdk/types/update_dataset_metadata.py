@@ -25,7 +25,7 @@ class MetadataUpdate(BaseModel):
     )
 
     # Enable strict type checking.
-    model_config = ConfigDict(strict=True, populate_by_name=True)
+    model_config = ConfigDict(strict=True, populate_by_name=True, extra="forbid")
 
     @field_validator("accuracy")
     @staticmethod
