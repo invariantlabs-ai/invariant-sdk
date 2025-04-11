@@ -33,3 +33,8 @@ poetry install
 ```bash
 hatch env update
 ```
+
+## Dev 
+To do a PyPi release: 
+1. Update the version in pyproject.toml and push the commit to main.
+2. On Github go to Actions > Select `Publish to PyPi` workflow on the left pane and click on Run workflow.
